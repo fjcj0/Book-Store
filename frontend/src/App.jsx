@@ -7,6 +7,7 @@ import SignUpPage from './pages/UserPages/SignUpPage';
 import CodePage from './pages/UserPages/CodePage';
 import HomePage from './pages/UserPages/HomePage';
 import BookPage from './pages/UserPages/BookPage';
+import DashboardPage from './pages/AdminPages/DashboardPage';
 const App = () => {
   return (
     <Routes>
@@ -15,7 +16,7 @@ const App = () => {
         <Route path='/book/:id' element={<BookPage />} />
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
-
+        <Route index element={<DashboardPage />} />
       </Route>
       <Route path='/signin' element={<SignInPage />}></Route>
       <Route path='/signup' element={<SignUpPage />}></Route>

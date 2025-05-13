@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router';
+import { useParams } from 'react-router-dom';
 const BookCard = ({ name, description, img }) => {
+    const { id } = useParams();
     return (
         <div className='w-[20rem] h-[30rem] rounded-md bg-white flex flex-col'>
             <div className='w-full h-[50%] flex items-center justify-center'>
@@ -19,7 +21,7 @@ const BookCard = ({ name, description, img }) => {
                 </div>
                 <Link
                     className='py-2 px-4 bg-green-700 duration-200 hover:bg-green-900 text-white rounded-xl font-bold font-poppins mt-3 w-fit self-start'
-                    to="/book-detail"
+                    to={`/book/${id}`}
                 >
                     View
                 </Link>

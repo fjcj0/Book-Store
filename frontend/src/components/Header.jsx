@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { UserCircleIcon, BookmarkIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router';
 const Header = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     return (
         <header className='flex items-center justify-between px-16 py-5 border-b bg-white border-gray-500'>
             <div>
-                <img src='/zust.png' className='rounded-full w-[3.5rem] h-[3.5rem]' alt='Logo' />
+                <Link to={'/'}>
+                    <img src='/zust.png' className='rounded-full w-[3.5rem] h-[3.5rem]' alt='Logo' />
+                </Link>
             </div>
-            <nav className='flex items-start justify-start gap-4 font-josefin text-md font-light text-black'>
-                <a href='#home' className='hover:text-orange-950 duration-200'>Home</a>
-                <a href='#about' className='hover:text-orange-950 duration-200'>About</a>
-                <a href='#books' className='hover:text-orange-950 duration-200'>Books</a>
-                <a href='#contact' className='hover:text-orange-950 duration-200'>Contact</a>
+            <nav className="hidden md:flex items-start justify-start gap-4 font-josefin text-md font-light text-black">
+                <a href="#home" className="hover:text-orange-950 duration-200">Home</a>
+                <a href="#about" className="hover:text-orange-950 duration-200">About</a>
+                <a href="#books" className="hover:text-orange-950 duration-200">Books</a>
+                <a href="#contact" className="hover:text-orange-950 duration-200">Contact</a>
             </nav>
             <div className='flex items-center gap-4 relative'>
                 <button className="relative text-gray-700 hover:text-black bottom-[0.20rem]">

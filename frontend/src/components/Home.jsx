@@ -16,9 +16,9 @@ const Home = () => {
                         <p className="py-6 max-w-[80%] font-josefin">
                             Here you can find all types of books that in Zust University easily. Just be careful when you borrow a book and return it on time.
                         </p>
-                        <button className="bg-green-600 hover:bg-green-900 duration-200 text-white rounded-md px-3 py-3 font-josefin font-bold">
+                        <a href='#books' className="bg-green-600 hover:bg-green-900 duration-200 text-white rounded-md px-3 py-3 font-josefin font-bold">
                             Get Started
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

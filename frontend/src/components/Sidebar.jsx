@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 const Sidebar = () => {
+    const links = ['/admin', '/addbook', '/editbooks', '/requests']
     return (
         <aside className="flex flex-col items-center bg-white text-gray-700 shadow h-full">
             <div className="h-16 flex items-center w-full">
@@ -41,7 +42,7 @@ const Sidebar = () => {
    <path d="M13.73 21a2 2 0 0 1-3.46 0" />`,]
                     .map((svgContent, index) => (
                         <li key={index} className="hover:bg-gray-100">
-                            <Link to={''}
+                            <Link to={`${links[index]}`}
                                 className="h-16 px-6 flex justify-center items-center w-full focus:text-orange-500"
                                 dangerouslySetInnerHTML={{
                                     __html: `<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${svgContent}</svg>`
