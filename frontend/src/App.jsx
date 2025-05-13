@@ -5,13 +5,15 @@ import AdminLayout from './layouts/AdminLayout';
 import SignInPage from './pages/UserPages/SignInPage';
 import SignUpPage from './pages/UserPages/SignUpPage';
 import CodePage from './pages/UserPages/CodePage';
+import HomePage from './pages/UserPages/HomePage';
+import BookPage from './pages/UserPages/BookPage';
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<UserLayout />}>
-
+        <Route index element={<HomePage />} />
+        <Route path='/book/:id' element={<BookPage />} />
       </Route>
-
       <Route path="/admin" element={<AdminLayout />}>
 
       </Route>

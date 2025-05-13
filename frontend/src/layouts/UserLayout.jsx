@@ -4,13 +4,12 @@ import Home from '../components/Home';
 import Footer from '../components/Footer';
 import About from '../components/About';
 import Books from '../components/Books';
+import { Outlet } from 'react-router';
 const UserLayout = () => {
     return (
         <div>
             <Header />
-            <Home />
-            <About />
-            <Books />
+            <Outlet />
             <Footer />
         </div>
     );

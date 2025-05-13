@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "cally": "^0.8.0",
     "daisyui": "^5.0.35",
     "framer-motion": "^12.10.5",
     "lottie-react": "^2.4.1",
