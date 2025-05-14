@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 const Sidebar = () => {
-    const links = ['/admin', '/addbook', '/editbooks', '/requests']
+    const links = ['/admin', '/admin/addbook', '/admin/editbooks', '/admin/requests']
     return (
         <div className='fixed z-50'>
             <aside className="relative flex flex-col items-center bg-white text-gray-700 shadow h-screen">

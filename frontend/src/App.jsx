@@ -8,19 +8,25 @@ import CodePage from './pages/UserPages/CodePage';
 import HomePage from './pages/UserPages/HomePage';
 import BookPage from './pages/UserPages/BookPage';
 import DashboardPage from './pages/AdminPages/DashboardPage';
+import AddBookPage from './pages/AdminPages/AddBookPage';
 const App = () => {
   return (
     <Routes>
+
       <Route path="/" element={<UserLayout />}>
         <Route index element={<HomePage />} />
         <Route path='/book/:id' element={<BookPage />} />
       </Route>
+
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<DashboardPage />} />
+        <Route path='/admin/addbook' element={<AddBookPage />} />
       </Route>
+
       <Route path='/signin' element={<SignInPage />}></Route>
       <Route path='/signup' element={<SignUpPage />}></Route>
       <Route path='/code' element={<CodePage />}></Route>
+
     </Routes>
   );
 };
