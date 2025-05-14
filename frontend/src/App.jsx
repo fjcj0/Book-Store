@@ -9,6 +9,7 @@ import HomePage from './pages/UserPages/HomePage';
 import BookPage from './pages/UserPages/BookPage';
 import DashboardPage from './pages/AdminPages/DashboardPage';
 import AddBookPage from './pages/AdminPages/AddBookPage';
+import EditBooksPage from './pages/AdminPages/EditBooksPage';
 const App = () => {
   return (
     <Routes>
@@ -21,6 +22,7 @@ const App = () => {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<DashboardPage />} />
         <Route path='/admin/addbook' element={<AddBookPage />} />
+        <Route path='/admin/editbooks' element={<EditBooksPage />} />
       </Route>
 
       <Route path='/signin' element={<SignInPage />}></Route>
