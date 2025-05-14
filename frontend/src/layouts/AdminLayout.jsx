@@ -5,7 +5,7 @@ const AdminLayout = () => {
     return (
         <div className='w-screen h-screen flex'>
             <Sidebar />
-            <main className='p-3 w-[100%]'>
+            <main className="absolute p-3 right-0 w-[calc(100%-4rem)]">
                 <Outlet />
             </main>
         </div>
