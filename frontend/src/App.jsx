@@ -10,6 +10,7 @@ import BookPage from './pages/UserPages/BookPage';
 import DashboardPage from './pages/AdminPages/DashboardPage';
 import AddBookPage from './pages/AdminPages/AddBookPage';
 import EditBooksPage from './pages/AdminPages/EditBooksPage';
+import EditBookPage from './pages/AdminPages/EditBookPage';
 const App = () => {
   return (
     <Routes>
@@ -23,6 +24,7 @@ const App = () => {
         <Route index element={<DashboardPage />} />
         <Route path='/admin/addbook' element={<AddBookPage />} />
         <Route path='/admin/editbooks' element={<EditBooksPage />} />
+        <Route path='/admin/editbook/:id' element={<EditBookPage />} />
       </Route>
 
       <Route path='/signin' element={<SignInPage />}></Route>

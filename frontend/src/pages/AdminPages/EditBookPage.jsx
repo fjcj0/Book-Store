@@ -1,18 +1,18 @@
 import React from 'react';
-const AddBookPage = () => {
+const EditBookPage = () => {
     return (
         <div className='w-screen h-screen flex sm:justify-center justify-start items-center font-josefin'>
             <div className='bg-base-300 p-5 rounded-xl'>
-                <h1 className='text-3xl font-mochiy'>Add <span className='text-yellow-400'>Book</span></h1>
+                <h1 className='text-3xl font-mochiy'>Edit <span className='text-yellow-400'>Book</span></h1>
                 <div className='mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                    <input type="text" placeholder="Enter book name" className="input" />
-                    <input type="number" placeholder='Enter quantity' className='input' />
+                    <input type="text" placeholder="Change book name" className="input" />
+                    <input type="number" placeholder='Change quantity' className='input' />
                 </div>
                 <div className='my-2'>
-                    <textarea className='input p-3 w-full h-[7rem]' placeholder='Enter description' ></textarea>
+                    <textarea className='input p-3 w-full h-[7rem]' placeholder='Change description' ></textarea>
                 </div>
                 <fieldset className="fieldset">
-                    <legend className="fieldset-legend">Choose Picture</legend>
+                    <legend className="fieldset-legend">Choose New Picture</legend>
                     <input type="file" className="file-input" />
                     <label className="label">Max size 2MB</label>
                 </fieldset>
@@ -24,4 +24,4 @@ const AddBookPage = () => {
         </div>
     );
 };
-export default AddBookPage;
+export default EditBookPage;
