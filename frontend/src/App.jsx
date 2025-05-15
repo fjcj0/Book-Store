@@ -11,6 +11,7 @@ import DashboardPage from './pages/AdminPages/DashboardPage';
 import AddBookPage from './pages/AdminPages/AddBookPage';
 import EditBooksPage from './pages/AdminPages/EditBooksPage';
 import EditBookPage from './pages/AdminPages/EditBookPage';
+import RequestsPage from './pages/AdminPages/RequestsPage';
 const App = () => {
   return (
     <Routes>
@@ -25,6 +26,7 @@ const App = () => {
         <Route path='/admin/addbook' element={<AddBookPage />} />
         <Route path='/admin/editbooks' element={<EditBooksPage />} />
         <Route path='/admin/editbook/:id' element={<EditBookPage />} />
+        <Route path='/admin/requests' element={<RequestsPage />} />
       </Route>
 
       <Route path='/signin' element={<SignInPage />}></Route>
