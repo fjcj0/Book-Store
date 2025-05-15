@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { UserCircleIcon, BookmarkIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router';
+import useSlideStore from '../store/SlideStore';
 const Header = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const openSlide = useSlideStore((state) => state.openSlide);
     return (
         <header className='flex items-center justify-between px-16 py-5 border-b bg-white border-gray-500'>
             <div>
@@ -17,7 +19,10 @@ const Header = () => {
                 <a href="#contact" className="hover:text-orange-950 duration-200">Contact</a>
             </nav>
             <div className='flex items-center gap-4 relative'>
-                <button className="relative text-gray-700 hover:text-black bottom-[0.20rem]">
+                <button
+                    onClick={openSlide}
+                    className="relative text-gray-700 hover:text-black bottom-[0.20rem]"
+                >
                     <BookmarkIcon className="h-6 w-6" />
                 </button>
                 <div className="relative">

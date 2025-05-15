@@ -1,13 +1,12 @@
 import React from 'react';
 import Header from '../components/Header';
-import Home from '../components/Home';
 import Footer from '../components/Footer';
-import About from '../components/About';
-import Books from '../components/Books';
 import { Outlet } from 'react-router';
+import Slide from '../components/Slide';
 const UserLayout = () => {
     return (
         <div>
+            <Slide />
             <Header />
             <Outlet />
             <Footer />
