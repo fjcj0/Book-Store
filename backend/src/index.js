@@ -7,6 +7,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
 const MongoUrl = process.env.MONGOURL;
+app.use(express.json());
 app.get('/', (req, res) => {
     res.send('<h1>Hello world!!</h1>');
 });
