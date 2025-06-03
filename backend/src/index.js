@@ -2,12 +2,14 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose, { mongo } from 'mongoose';
 import authRoutes from './routes/auth.route.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
 const MongoUrl = process.env.MONGOURL;
 app.use(express.json());
+app.use(cookieParser());
 app.get('/', (req, res) => {
     res.send('<h1>Hello world!!</h1>');
 });

@@ -3,6 +3,17 @@ import bcryptjs from 'bcryptjs';
 import crypto from 'crypto';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie.js';
 import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } from '../mail/emails.js';
+export const checkAuth = async (request, response) => {
+    try {
+        const user = await User.findById(request.userId).select('-password');
+        if (!user) {
+            return response.status(404).json({ success: false, message: 'error no user is authenticated!!' });
+        }
+        return response.status(200).json({ success: true, user });
+    } catch (error) {
+        return response.status(400).json({ success: false, message: error.message });
+    }
+};
 export const signup = async (request, response) => {
     const { email, username, name, password } = request.body;
     try {
