@@ -1,7 +1,7 @@
 import { User } from '../models/user.model.js';
 import bcryptjs from 'bcryptjs';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie.js';
-import { sendVerificationEmail } from '../mail/emails.js';
+import { sendVerificationEmail, sendWelcomeEmail } from '../mail/emails.js';
 export const signup = async (request, response) => {
     const { email, username, name, password } = request.body;
     try {
@@ -37,6 +37,32 @@ export const signup = async (request, response) => {
         })
     } catch (error) {
         return response.status(404).json({ success: false, message: error.message })
+    }
+};
+export const verifyEmail = async (request, response) => {
+    const { code } = request.body;
+    try {
+        const user = await User.findOne({
+            verificationToken: code,
+            verificationTokenExpiresAt: { $gt: Date.now() },
+        });
+        if (!user) {
+            return response.status(400).json({ success: false, message: "Invalid code or expired verification code!!" });
+        }
+        user.isVerified = true;
+        user.verificationTokenExpiresAt = undefined;
+        user.verificationToken = undefined;
+        await user.save();
+        sendWelcomeEmail(user.email, user.name);
+        response.status(200).json({
+            success: true, message: `Welcome ${user.name}!!`,
+            user: {
+                ...user._doc,
+                password: undefined,
+            }
+        });
+    } catch (error) {
+        return response.status(404).json({ success: false, message: error.message });
     }
 };
 export const login = async (request, response) => {
