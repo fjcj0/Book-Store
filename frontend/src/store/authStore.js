@@ -33,4 +33,18 @@ export const useAuthStore = create((set) => ({
             throw new Error(error.response?.data?.message || error.message);
         }
     },
+    checkAuth: async () => {
+        set({ isCheckingAuth: true, error: null });
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_USER_URL}/check-auth`);
+            set({ user: response.data.user, isAuthenticated: true, isCheckingAuth: false });
+        } catch (error) {
+            set({
+                error: null,
+                isAuthenticated: false,
+                isCheckingAuth: false
+            });
+            throw new Error(error.response?.data?.message || error.message);
+        }
+    }
 }));
