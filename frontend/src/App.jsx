@@ -12,28 +12,28 @@ import AddBookPage from './pages/AdminPages/AddBookPage';
 import EditBooksPage from './pages/AdminPages/EditBooksPage';
 import EditBookPage from './pages/AdminPages/EditBookPage';
 import RequestsPage from './pages/AdminPages/RequestsPage';
+import { Toaster } from 'react-hot-toast';
 const App = () => {
   return (
-    <Routes>
-
-      <Route path="/" element={<UserLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path='/book/:id' element={<BookPage />} />
-      </Route>
-
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<DashboardPage />} />
-        <Route path='/admin/addbook' element={<AddBookPage />} />
-        <Route path='/admin/editbooks' element={<EditBooksPage />} />
-        <Route path='/admin/editbook/:id' element={<EditBookPage />} />
-        <Route path='/admin/requests' element={<RequestsPage />} />
-      </Route>
-
-      <Route path='/signin' element={<SignInPage />}></Route>
-      <Route path='/signup' element={<SignUpPage />}></Route>
-      <Route path='/code' element={<CodePage />}></Route>
-
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<UserLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path='/book/:id' element={<BookPage />} />
+        </Route>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path='/admin/addbook' element={<AddBookPage />} />
+          <Route path='/admin/editbooks' element={<EditBooksPage />} />
+          <Route path='/admin/editbook/:id' element={<EditBookPage />} />
+          <Route path='/admin/requests' element={<RequestsPage />} />
+        </Route>
+        <Route path='/signin' element={<SignInPage />}></Route>
+        <Route path='/signup' element={<SignUpPage />}></Route>
+        <Route path='/code' element={<CodePage />}></Route>
+      </Routes>
+      <Toaster />
+    </>
   );
 };
 export default App;

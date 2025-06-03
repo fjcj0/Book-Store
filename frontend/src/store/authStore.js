@@ -16,7 +16,21 @@ export const useAuthStore = create((set) => ({
             set({ user: response.data.user, isAuthenticated: true, isLoading: false });
         } catch (error) {
             set({ error: error.response.data.message || error.message, isLoading: false });
-            console.log(error.message);
+            throw new Error(error.response?.data?.message || error.message);
+        }
+    },
+    verifyEmail: async (code) => {
+        set({ isLoading: true, error: null });
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_USER_URL}/verify-email`, { code });
+            set({ user: response.data.user, isAuthenticated: true, isLoading: false });
+            return response.data;
+        } catch (error) {
+            set({
+                error: error.response?.data?.message || 'Verification failed',
+                isLoading: false
+            });
+            throw new Error(error.response?.data?.message || error.message);
         }
     },
 }));

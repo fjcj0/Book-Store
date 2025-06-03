@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { useAuthStore } from '../../store/AuthStore.js';
+import Loader from '../../tools/Loader.jsx';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 const CodePage = () => {
     const [code, setCode] = useState(['', '', '', '', '', '']);
     const handleChange = (value, index) => {
@@ -8,7 +12,20 @@ const CodePage = () => {
         updated[index] = value;
         setCode(updated);
     };
+    const navigate = useNavigate();
     const isCodeValid = code.every(digit => digit !== '');
+    const { error, verifyEmail, isLoading } = useAuthStore();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const joinedCode = code.join('');
+            await verifyEmail(joinedCode);
+            navigate('/');
+            toast.success('Email is verified');
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
     return (
         <div className='w-full h-[100vh] flex items-center justify-center'>
             <div className='p-8 rounded-lg shadow-md bg-slate-950 w-96'>
@@ -40,11 +57,13 @@ const CodePage = () => {
                     </p>
                 </div>
                 <button
-                    disabled={!isCodeValid}
+                    disabled={!isCodeValid || isLoading}
                     className='w-full bg-green-600 text-white font-semibold py-2 rounded-md hover:bg-green-800 
-                    disabled:opacity-50 disabled:cursor-not-allowed duration-300 transition'>
-                    Create Account
+                    disabled:opacity-50 disabled:cursor-not-allowed duration-300 transition'
+                    onClick={handleSubmit}>
+                    {isLoading ? <Loader /> : 'Verify Code'}
                 </button>
+                {error && <p className='text-red-500 font-semibold my-2'>{error}</p>}
             </div>
         </div>
     );

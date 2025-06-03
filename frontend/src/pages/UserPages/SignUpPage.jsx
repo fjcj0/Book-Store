@@ -82,7 +82,7 @@ const SignUpPage = () => {
                     />
                 </div>
                 <button
-                    disabled={(!(isNameValid && isUsernameValid && isEmailValid && isPasswordValid) && isLoading)}
+                    disabled={(!(isNameValid && isUsernameValid && isEmailValid && isPasswordValid) || isLoading)}
                     className='mt-4 w-full bg-green-600 text-white font-semibold py-2 rounded-md 
                     hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition'
                     onClick={handleSignUp}>
