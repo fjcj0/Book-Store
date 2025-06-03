@@ -66,7 +66,35 @@ export const verifyEmail = async (request, response) => {
     }
 };
 export const login = async (request, response) => {
-    response.send("login page");
+    const { username, password } = request.body;
+    try {
+        if (!username || !password) {
+            return response.status(404).json({ success: false, message: "Username or password is empty!!" });
+        }
+        const user = await User.findOne({ username });
+        if (!user) {
+            return response.status(404).json({ success: false, message: 'Invalid credentials!!' });
+        }
+
+        const isPasswordValid = await bcryptjs.compare(password, user.password);
+        if (!isPasswordValid) {
+            return response.status(404).json({ success: false, message: 'Invalid credentials!!' });
+        }
+
+        generateTokenAndSetCookie(response, user._id);
+        user.lastLogin = Date.now();
+        await user.save();
+        return response.status(200).json({
+            success: true,
+            message: 'Login successfully!!',
+            user: {
+                ...user._doc,
+                password: undefined,
+            }
+        });
+    } catch (error) {
+        return response.status(400).json({ success: false, message: error.message });
+    }
 };
 export const logout = async (request, response) => {
     response.clearCookie('token');
