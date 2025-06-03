@@ -1,7 +1,8 @@
 import { User } from '../models/user.model.js';
 import bcryptjs from 'bcryptjs';
+import crypto from 'crypto';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie.js';
-import { sendVerificationEmail, sendWelcomeEmail } from '../mail/emails.js';
+import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail } from '../mail/emails.js';
 export const signup = async (request, response) => {
     const { email, username, name, password } = request.body;
     try {
@@ -99,4 +100,23 @@ export const login = async (request, response) => {
 export const logout = async (request, response) => {
     response.clearCookie('token');
     response.status(200).json({ success: true, message: "you have been logged out successfully!!" });
+};
+export const forgotPassword = async (request, response) => {
+    const { email } = request.body;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return response.status(404).json({ success: false, message: "User doesn't exist!!" });
+        }
+
+        const resetToken = crypto.randomBytes(20).toString('hex');
+        const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpiresAt = resetTokenExpiresAt;
+        await user.save();
+        sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`);
+        return response.status(200).json({ success: true, message: "password link sent successfully!!" });
+    } catch (error) {
+        return response.status(400).json({ success: false, message: error.message });
+    }
 };
