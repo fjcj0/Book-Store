@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 const CodePage = () => {
-    const [code, setCode] = useState(['', '', '', '']);
+    const [code, setCode] = useState(['', '', '', '', '', '']);
     const handleChange = (value, index) => {
         if (!/^[0-9]?$/.test(value)) return;
         const updated = [...code];
@@ -14,7 +14,7 @@ const CodePage = () => {
             <div className='p-8 rounded-lg shadow-md bg-slate-950 w-96'>
                 <h1 className='text-white font-bold text-2xl mb-6 text-center'>Verification Code</h1>
                 <div className='mb-4 text-gray-300 text-center text-sm'>
-                    <p>Enter the 4-digit code sent to your email</p>
+                    <p>Enter the 6-digit code sent to your email</p>
                 </div>
                 <div className='flex justify-center gap-3 mb-6'>
                     {code.map((value, i) => (
