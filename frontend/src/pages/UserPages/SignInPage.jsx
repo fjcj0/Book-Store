@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import Input from '../../components/Input';
 import { FaUser, FaLock, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { useAuthStore } from '../../store/authStore.js';
+import Loader from '../../tools/Loader.jsx';
 const SignInPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const isUsernameValid = username.trim().length >= 6;
     const isPasswordValid = password.trim().length >= 8;
+    const { signin, isLoading, error } = useAuthStore();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await signin(username, password);
+    };
     return (
         <div className='w-full h-[100vh] flex items-center justify-center'>
             <div className='p-8 rounded-lg shadow-md bg-slate-950 w-96'>
@@ -35,11 +42,13 @@ const SignInPage = () => {
                     />
                 </div>
                 <button
-                    disabled={!(isUsernameValid && isPasswordValid)}
+                    disabled={(!(isUsernameValid && isPasswordValid) || isLoading)}
                     className='mt-4 w-full bg-green-600 text-white font-semibold py-2 rounded-md 
-                    hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition'>
-                    Sign In
+                    hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition'
+                    onClick={handleSubmit}>
+                    {isLoading ? <Loader /> : 'Sign In'}
                 </button>
+                {error && <p className='text-red-500 font-semibold my-2'>{error}</p>}
             </div>
         </div>
     );

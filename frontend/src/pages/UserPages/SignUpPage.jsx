@@ -9,7 +9,7 @@ import {
     FaCheckCircle,
     FaTimesCircle
 } from 'react-icons/fa';
-import { useAuthStore } from '../../store/AuthStore.js';
+import { useAuthStore } from '../../store/authStore.js';
 import Loader from '../../tools/Loader.jsx';
 const SignUpPage = () => {
     const [name, setName] = useState('');

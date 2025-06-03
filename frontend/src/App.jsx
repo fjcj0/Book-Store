@@ -14,6 +14,7 @@ import EditBookPage from './pages/AdminPages/EditBookPage';
 import RequestsPage from './pages/AdminPages/RequestsPage';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/AuthStore.js';
+import Loader from './tools/Loader.jsx';
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated) {
@@ -32,10 +33,11 @@ const RedirectAuthenticatedUser = ({ children }) => {
   return children;
 };
 const App = () => {
-  const { checkAuth } = useAuthStore();
+  const { checkAuth, isCheckingAuth } = useAuthStore();
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+  if (isCheckingAuth) return <div className='w-screen h-screen flex items-center justify-center'><Loader /></div>
   return (
     <>
       <Routes>

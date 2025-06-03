@@ -46,5 +46,17 @@ export const useAuthStore = create((set) => ({
             });
             throw new Error(error.response?.data?.message || error.message);
         }
-    }
+    },
+    signin: async (username, password) => {
+        set({ isLoading: true, error: null });
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_USER_URL}/login`, {
+                username, password
+            });
+            set({ user: response.data.user, isAuthenticated: true, isLoading: false });
+        } catch (error) {
+            set({ error: error.response.data.message || error.message, isLoading: false });
+            throw new Error(error.response?.data?.message || error.message);
+        }
+    },
 }));
