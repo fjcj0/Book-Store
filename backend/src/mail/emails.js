@@ -1,4 +1,4 @@
-import { PASSWORD_RESET_REQUEST_TEMPLATE, VERIFICATION_EMAIL_TEMPLATE, WELCOME_EMAIL_TEMPLATE } from "./emailTemplates.js";
+import { PASSWORD_RESET_REQUEST_TEMPLATE, PASSWORD_RESET_SUCCESS_TEMPLATE, VERIFICATION_EMAIL_TEMPLATE, WELCOME_EMAIL_TEMPLATE } from "./emailTemplates.js";
 import { sender, transporter } from "./gmail.config.js";
 export const sendVerificationEmail = async (email, verificationToken) => {
     const recipient = email;
@@ -38,6 +38,20 @@ export const sendPasswordResetEmail = async (email, resetUrl) => {
             html: PASSWORD_RESET_REQUEST_TEMPLATE.replace('{resetURL}', resetUrl),
         });
         console.log('Email sent successfully: ', response);
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+export const sendResetSuccessEmail = async (email) => {
+    const recipient = email;
+    try {
+        const response = await transporter.sendMail({
+            from: sender.email,
+            to: recipient,
+            subject: 'Password changed successfully!!',
+            html: PASSWORD_RESET_SUCCESS_TEMPLATE,
+        });
+        console.log('Password changed successfully: ', response);
     } catch (error) {
         console.log(error.message);
     }

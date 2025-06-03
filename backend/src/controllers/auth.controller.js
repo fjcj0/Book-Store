@@ -2,7 +2,7 @@ import { User } from '../models/user.model.js';
 import bcryptjs from 'bcryptjs';
 import crypto from 'crypto';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie.js';
-import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail } from '../mail/emails.js';
+import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } from '../mail/emails.js';
 export const signup = async (request, response) => {
     const { email, username, name, password } = request.body;
     try {
@@ -116,6 +116,28 @@ export const forgotPassword = async (request, response) => {
         await user.save();
         sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`);
         return response.status(200).json({ success: true, message: "password link sent successfully!!" });
+    } catch (error) {
+        return response.status(400).json({ success: false, message: error.message });
+    }
+};
+export const resetPassword = async (request, response) => {
+    try {
+        const { token } = request.params;
+        const { password } = request.body;
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpiresAt: { $gt: Date.now() }
+        });
+        if (!user) {
+            return response.status(404).json({ success: false, message: 'Invalid or expired reset token' });
+        }
+        const hashedPassword = await bcryptjs.hash(password, 10);
+        user.password = hashedPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpiresAt = undefined;
+        await user.save();
+        sendResetSuccessEmail(user.email);
+        return response.status(200).json({ success: true, message: 'Password has been changed successfully!!' });
     } catch (error) {
         return response.status(400).json({ success: false, message: error.message });
     }
