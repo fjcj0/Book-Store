@@ -59,4 +59,14 @@ export const useAuthStore = create((set) => ({
             throw new Error(error.response?.data?.message || error.message);
         }
     },
+    logout: async () => {
+        set({ isLoading: true, error: null });
+        try {
+            await axios.post(`${import.meta.env.VITE_API_USER_URL}/logout`);
+            set({ user: null, isAuthenticated: false, isLoading: false });
+        } catch (error) {
+            set({ error: error.response.data.message || error.message, isLoading: false });
+            throw new Error(error.response?.data?.message || error.message);
+        }
+    },
 }));
