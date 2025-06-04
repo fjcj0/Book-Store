@@ -31,8 +31,8 @@ const DashboardPage = () => {
                     />
                 </div>
             </div>
-            <div className="bg-base-300 p-3 rounded-xl my-5 gap-3 grid grid-cols-1 sm:grid-cols-2">
-                <div>
+            <div className="p-3 rounded-xl my-5 grid grid-cols-1 ">
+                <div className="bg-base-300 p-5 my-5 rounded-md">
                     <h1 className="font-josefin font-bold text-sm">
                         Total borrowed books last week
                     </h1>
@@ -40,7 +40,7 @@ const DashboardPage = () => {
                         <LineChartBorrowedBooks />
                     </div>
                 </div>
-                <div>
+                <div className="bg-base-300 p-5 rounded-md">
                     <h1 className="font-josefin font-bold text-sm">
                         Total requests last week
                     </h1>

@@ -46,8 +46,7 @@ const Header = () => {
                             </button>
                             {dropdownOpen && (
                                 <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 text-black shadow-md rounded-md text-sm z-50">
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-50">Profile</a>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-50">Settings</a>
+                                    <Link to="/user/dashboard" className="block px-4 py-2 hover:bg-gray-50">Dashboard</Link>
                                     <button type='button' className=" w-[100%] py-2 flex px-4 items-start hover:bg-gray-50" onClick={handleLogout}>Logout</button>
                                 </div>
                             )}

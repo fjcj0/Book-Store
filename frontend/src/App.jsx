@@ -15,6 +15,7 @@ import RequestsPage from './pages/AdminPages/RequestsPage';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/AuthStore.js';
 import Loader from './tools/Loader.jsx';
+import UserDashboardPage from './pages/UserPages/UserDashboardPage.jsx';
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated) {
@@ -48,7 +49,15 @@ const App = () => {
                 <HomePage />
               </ProtectedRoute>
             } />
-          <Route path="/book/:id" element={<BookPage />} />
+          <Route path="/book/:id" element=
+            {<ProtectedRoute>
+              <BookPage />
+            </ProtectedRoute>
+            } />
+          <Route path='/user/dashboard' element={
+            <ProtectedRoute>
+              <UserDashboardPage />
+            </ProtectedRoute>} />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardPage />} />
@@ -76,5 +85,4 @@ const App = () => {
     </>
   );
 };
-
 export default App;
