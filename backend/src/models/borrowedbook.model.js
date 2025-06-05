@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const borrowedBookSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,

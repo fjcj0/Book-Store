@@ -1,6 +1,8 @@
 import { Book } from '../models/book.model.js';
-import cloudinary from 'cloudinary';
+import cloudinary from '../utils/cloudinary.js';
 import { getPublicIdFromUrl } from '../utils/getPublicFormUrl.js';
+import { SavedBook } from '../models/savedbook.model.js';
+import { BorrowedBook } from '../models/borrowedbook.model.js';
 export const addBook = async (request, response) => {
     const { name, quantity, picture, description } = request.body;
     try {
@@ -23,24 +25,32 @@ export const addBook = async (request, response) => {
     }
 };
 export const deleteBook = async (request, response) => {
+    const { bookId } = request.body;
     try {
-        const { id } = request.body;
-        const book = await Book.findById(id);
+        if (!bookId) {
+            return response.status(400).json({ success: false, message: 'Id is required!!' });
+        }
+        const book = await Book.findById(bookId);
         if (!book) {
             return response.status(404).json({ success: false, message: 'Book not found' });
         }
         const publicId = getPublicIdFromUrl(book.picture);
         await cloudinary.uploader.destroy(publicId);
-        await Book.findByIdAndDelete(id);
+        await SavedBook.deleteMany({ book: bookId });
+        await BorrowedBook.deleteMany({ book: bookId });
+        await Book.findByIdAndDelete(bookId);
         return response.status(200).json({ success: true, message: 'Book deleted successfully' });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });
     }
 };
 export const findBook = async (request, response) => {
-    const { id } = request.body;
+    const { bookId } = request.body;
     try {
-        const book = await Book.findById(id);
+        if (!bookId) {
+            return response.status(400).json({ success: false, message: 'Id is required!!' });
+        }
+        const book = await Book.findById(bookId);
         if (!book) {
             return response.status(404).json({ success: false, message: "No book" });
         }
@@ -50,10 +60,10 @@ export const findBook = async (request, response) => {
     }
 };
 export const editBook = async (request, response) => {
-    const { id, newName, newQuantity, newPicture, newDescription } = request.body;
+    const { bookId, newName, newQuantity, newPicture, newDescription } = request.body;
     try {
-        if (id) {
-            const book = await Book.findById(id);
+        if (bookId) {
+            const book = await Book.findById(bookId);
             if (newName) book.name = newName;
             if (newQuantity) book.quantity = newQuantity;
             if (newDescription) book.description = newDescription;
@@ -69,6 +79,105 @@ export const editBook = async (request, response) => {
             return response.status(200).json({ success: true, message: 'Book has been changed successfully!!', book });
         }
         return response.status(400).json({ success: false, message: 'Book is not on collection!!' });
+    } catch (error) {
+        return response.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const addBorrowedBookUser = async (request, response) => {
+    const { userId, bookId } = request.body;
+    try {
+        if (!userId || !bookId) {
+            return response.status(400).json({ success: false, message: 'UserId or BookId are missed!!' });
+        }
+        const newBorrowedBookUser = await new BorrowedBook({
+            user: userId,
+            book: bookId
+        });
+        await newBorrowedBookUser.save();
+        return response.status(200).json({ success: true, message: 'Book has been added successfully!!', newBorrowedBookUser });
+    } catch (error) {
+        return response.status(500).json({ success: false, message: error.message });
+    }
+};
+export const borrowedBooks = async (request, response) => {
+    try {
+        const borrowedBook = await BorrowedBook.find({});
+        if (!borrowedBook || borrowedBook.length === 0) {
+            return response.status(200).json({ success: true, message: 'No borrowed books found!!' });
+        }
+        return response.status(200).json({ success: true, borrowedBook });
+    } catch (error) {
+        return response.status(500).json({ success: false, message: error.message });
+    }
+};
+export const borrowedBooksUser = async (request, response) => {
+    const { userId } = request.body;
+    try {
+        if (!userId) {
+            return response.status(400).json({ success: false, message: 'Id doesnt exist!!' });
+        }
+        const BorrowedBooksOfUser = await BorrowedBook.find({ user: userId });
+        if (!BorrowedBooksOfUser || BorrowedBooksOfUser.length == 0) {
+            return response.status(200).json({ success: true, message: 'No borrowed Books for this user!!' });
+        }
+        return response.status(201).json({ success: true, BorrowedBooksOfUser });
+    } catch (error) {
+        return response.status(500).json({ success: false, message: error.message });
+    }
+};
+export const deleteBorrowedBook = async (request, response) => {
+    const { borrowedBookId } = request.body;
+    try {
+        if (!borrowedBookId) {
+            return response.status(400).json({ success: false, message: 'id not exist!!' });
+        }
+        await BorrowedBook.deleteOne({ _id: borrowedBookId });
+        return response.status(200).json({ success: true, message: 'Borrowed Book has been deleted successfully!!' });
+    } catch (error) {
+        return response.status(500).json({ success: true, message: error.message });
+    }
+};
+
+export const addSavedBookUser = async (request, response) => {
+    const { userId, bookId } = request.body;
+    try {
+        if (!userId || !bookId) {
+            return response.status(400).json({ success: false, message: 'UserId or BookId are missed!!' });
+        }
+        const newSavedBookUser = new SavedBook({
+            user: userId,
+            book: bookId
+        });
+        await newSavedBookUser.save();
+        return response.status(200).json({ success: true, message: 'Book has been added successfully!!', newSavedBookUser });
+    } catch (error) {
+        return response.status(500).json({ success: false, message: error.message });
+    }
+};
+export const savedBookUser = async (request, response) => {
+    const { userId } = request.body;
+    try {
+        if (!userId) {
+            return response.status(400).json({ success: false, message: 'saved Books of user not found!!' });
+        }
+        const savedBooksOfUser = await SavedBook.find({ user: userId });
+        if (!savedBooksOfUser || savedBookUser.length == 0) {
+            return response.status(200).json({ success: true, message: 'No saved books for this user!!' });
+        }
+        return response.status(201).json({ success: true, savedBooksOfUser });
+    } catch (error) {
+        return response.status(500).json({ success: false, message: error.message });
+    }
+};
+export const deleteSavedBook = async (request, response) => {
+    const { savedBookId } = request.body;
+    try {
+        if (!savedBookId) {
+            return response.status(400).json({ success: false, message: 'saved Book of user not found!!' });
+        }
+        await SavedBook.deleteOne({ _id: savedBookId });
+        return response.status(201).json({ success: true, message: 'Saved Book of user has been deleted successfully!!' });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });
     }
