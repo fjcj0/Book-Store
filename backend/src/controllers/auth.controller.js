@@ -153,3 +153,40 @@ export const resetPassword = async (request, response) => {
         return response.status(400).json({ success: false, message: error.message });
     }
 };
+export const editUser = async (request, response) => {
+    const { newUsername, newName, id } = request.body;
+    try {
+        if (id) {
+            if (!newUsername && !newName) {
+                return response.status(400).json({
+                    success: false,
+                    message: 'At least one field (username or name) must be provided to edit.'
+                });
+            }
+            const user = await User.findById(id);
+            if (!user) {
+                return response.status(404).json({
+                    success: false,
+                    message: 'User not found.'
+                });
+            }
+            if (newUsername) user.username = newUsername;
+            if (newName) user.name = newName;
+            await user.save();
+            return response.status(200).json({
+                success: true,
+                message: `${newUsername && newName
+                    ? 'Username and name'
+                    : newUsername
+                        ? 'Username'
+                        : 'Name'} has been changed successfully!`
+            });
+        }
+        return response.status(400).json({ success: false, message: "error user not found!!" });
+    } catch (error) {
+        return response.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
