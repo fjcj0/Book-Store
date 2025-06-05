@@ -1,12 +1,11 @@
 import express from 'express';
+import { addBook, DeleteBook } from '../controllers/book.controller.js';
 const router = express.Router();
-
-router.post('/add-book',);
+router.post('/add-book', addBook);
 router.post('/edit-book',);
 router.post('/find-book',);
 router.post('/saved-books-user',);
 router.post('/borrowed-books-user',);
 router.post('/borrowed-books',);
-router.delete('/delete-book',);
-
+router.delete('/delete-book', DeleteBook);
 export default router;
