@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose, { mongo } from 'mongoose';
 import authRoutes from './routes/auth.route.js';
+import bookRoutes from './routes/book.routes.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/book', bookRoutes);
 
 mongoose.connect(MongoUrl).then(() => {
     console.log('Database is connected successfully!!');
