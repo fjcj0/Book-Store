@@ -3,29 +3,44 @@ import cloudinary from '../utils/cloudinary.js';
 import { getPublicIdFromUrl } from '../utils/getPublicFormUrl.js';
 import { SavedBook } from '../models/savedbook.model.js';
 import { BorrowedBook } from '../models/borrowedbook.model.js';
+import { Request } from '../models/request.model.js';
 export const addBook = async (request, response) => {
-    const { name, quantity, picture, description } = request.body;
     try {
-        if (!name || !quantity || !picture || !description) {
+        const { name, quantity, description } = request.body;
+        const file = request.file;
+        if (!name || !quantity || !description || !file) {
             return response.status(400).json({ success: false, message: 'All fields are required!' });
         }
-        const uploadResult = await cloudinary.uploader.upload(picture, {
-            folder: 'books'
+        const uploadResult = await new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                { folder: 'books' },
+                (error, result) => {
+                    if (error) return reject(error);
+                    resolve(result);
+                }
+            );
+            stream.end(file.buffer);
         });
         const newBook = new Book({
             name,
             quantity,
             picture: uploadResult.secure_url,
-            description
+            description,
         });
         await newBook.save();
-        return response.status(201).json({ success: true, message: 'Book added successfully!', book: newBook });
+        return response.status(201).json({
+            success: true,
+            message: 'Book added successfully!',
+            book: newBook,
+        });
     } catch (error) {
+        console.error('Upload error:', error);
         return response.status(500).json({ success: false, message: error.message });
     }
 };
 export const deleteBook = async (request, response) => {
     const { bookId } = request.body;
+    console.log(bookId);
     try {
         if (!bookId) {
             return response.status(400).json({ success: false, message: 'Id is required!!' });
@@ -36,6 +51,7 @@ export const deleteBook = async (request, response) => {
         }
         const publicId = getPublicIdFromUrl(book.picture);
         await cloudinary.uploader.destroy(publicId);
+        await Request.deleteMany({ book: bookId });
         await SavedBook.deleteMany({ book: bookId });
         await BorrowedBook.deleteMany({ book: bookId });
         await Book.findByIdAndDelete(bookId);
@@ -60,25 +76,41 @@ export const findBook = async (request, response) => {
     }
 };
 export const editBook = async (request, response) => {
-    const { bookId, newName, newQuantity, newPicture, newDescription } = request.body;
+    const { bookId, newName, newQuantity, newDescription } = request.body;
+    const newPicture = request.file;
     try {
-        if (bookId) {
-            const book = await Book.findById(bookId);
-            if (newName) book.name = newName;
-            if (newQuantity) book.quantity = newQuantity;
-            if (newDescription) book.description = newDescription;
-            if (newPicture) {
-                const publicId = getPublicIdFromUrl(book.picture);
-                await cloudinary.uploader.destroy(publicId);
-                const uploadResult = await cloudinary.uploader.upload(newPicture, {
-                    folder: 'books'
-                });
-                book.picture = uploadResult.secure_url;
-            }
-            await book.save();
-            return response.status(200).json({ success: true, message: 'Book has been changed successfully!!', book });
+        if (!bookId) {
+            return response.status(400).json({ success: false, message: 'Book ID is required!' });
         }
-        return response.status(400).json({ success: false, message: 'Book is not on collection!!' });
+
+        const book = await Book.findById(bookId);
+        if (!book) {
+            return response.status(404).json({ success: false, message: 'Book not found!' });
+        }
+        if (newName) book.name = newName;
+        if (newQuantity) book.quantity = newQuantity;
+        if (newDescription) book.description = newDescription;
+        if (newPicture) {
+            const publicId = getPublicIdFromUrl(book.picture);
+            await cloudinary.uploader.destroy(publicId);
+            const uploadResult = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: 'books' },
+                    (error, result) => {
+                        if (error) return reject(error);
+                        resolve(result);
+                    }
+                );
+                stream.end(newPicture.buffer);
+            });
+            book.picture = uploadResult.secure_url;
+        }
+        await book.save();
+        return response.status(200).json({
+            success: true,
+            message: 'Book has been updated successfully!',
+            book
+        });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });
     }
