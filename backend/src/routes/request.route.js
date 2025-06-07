@@ -5,5 +5,5 @@ const router = express.Router();
 router.post('/requests', requests);
 router.post('/add-request', verifyToken, addRequest);
 router.post('/approve-request', approveRequest);
-router.post('/reject-request', rejectRequest);
+router.delete('/reject-request', rejectRequest);
 export default router;

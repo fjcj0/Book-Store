@@ -122,7 +122,7 @@ export const addBorrowedBookUser = async (request, response) => {
         if (!userId || !bookId || !toDate) {
             return response.status(400).json({ success: false, message: 'UserId and BookId and toDate are missed!!' });
         }
-        const checkBorrowedBook = await BorrowedBook.find({ user: userId, book: bookId });
+        const checkBorrowedBook = await BorrowedBook.findOne({ user: userId, book: bookId });
         if (checkBorrowedBook) return response.status(200).json({ success: true, message: 'This book is added before!!' });
         const book = await Book.findById(bookId);
         if (book.quantity == 0) {

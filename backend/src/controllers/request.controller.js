@@ -67,7 +67,7 @@ export const approveRequest = async (request, response) => {
         const request = await Request.findOne({ book: bookId, user: userId });
         if (request) {
             const toDate = request.toDate;
-            const checkBorrowedBook = await BorrowedBook.find({ user: userId, book: bookId });
+            const checkBorrowedBook = await BorrowedBook.findOne({ user: userId, book: bookId });
             if (checkBorrowedBook) return response.status(200).json({ success: true, message: 'This book is added before!!' });
             const book = await Book.findById(bookId);
             if (book.quantity == 0) {
@@ -82,6 +82,7 @@ export const approveRequest = async (request, response) => {
             await Request.deleteOne({ book: bookId, user: userId });
             await book.save();
             await newBorrowedBook.save();
+            return response.status(200).json({ success: true, message: 'your request has been accepted!!', newBorrowedBook });
         }
         return response.status(400).json({ success: false, message: 'request not found!!' });
     } catch (error) {
