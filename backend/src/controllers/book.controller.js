@@ -117,15 +117,24 @@ export const editBook = async (request, response) => {
 };
 
 export const addBorrowedBookUser = async (request, response) => {
-    const { userId, bookId } = request.body;
+    const { userId, bookId, toDate } = request.body;
     try {
-        if (!userId || !bookId) {
-            return response.status(400).json({ success: false, message: 'UserId or BookId are missed!!' });
+        if (!userId || !bookId || !toDate) {
+            return response.status(400).json({ success: false, message: 'UserId and BookId and toDate are missed!!' });
         }
-        const newBorrowedBookUser = await new BorrowedBook({
+        const checkBorrowedBook = await BorrowedBook.find({ user: userId, book: bookId });
+        if (checkBorrowedBook) return response.status(200).json({ success: true, message: 'This book is added before!!' });
+        const book = await Book.findById(bookId);
+        if (book.quantity == 0) {
+            return response.status(400).json({ success: false, message: 'There is no enough book' });
+        }
+        const newBorrowedBookUser = new BorrowedBook({
             user: userId,
-            book: bookId
+            book: bookId,
+            toDate: toDate
         });
+        book.quantity = book.quantity - 1;
+        await book.save();
         await newBorrowedBookUser.save();
         return response.status(200).json({ success: true, message: 'Book has been added successfully!!', newBorrowedBookUser });
     } catch (error) {
@@ -159,13 +168,18 @@ export const borrowedBooksUser = async (request, response) => {
     }
 };
 export const deleteBorrowedBook = async (request, response) => {
-    const { borrowedBookId } = request.body;
+    const { borrowedBookId, bookId } = request.body;
     try {
-        if (!borrowedBookId) {
-            return response.status(400).json({ success: false, message: 'id not exist!!' });
+        if (!borrowedBookId || !bookId) {
+            return response.status(400).json({ success: false, message: 'bookId and borrowedBookId not exist!!' });
         }
+        const checkBorrowedBook = await BorrowedBook.findById(borrowedBookId);
+        if (!checkBorrowedBook) return response.status(400).json({ success: false, message: 'This book is not found!!' });
+        const book = await Book.findById(bookId);
+        if (checkBorrowedBook.returned == false) book.quantity = book.quantity + 1;
         await BorrowedBook.deleteOne({ _id: borrowedBookId });
-        return response.status(200).json({ success: true, message: 'Borrowed Book has been deleted successfully!!' });
+        await book.save();
+        return response.status(200).json({ success: true, message: 'Borrowed Book has been returned successfully!!' });
     } catch (error) {
         return response.status(500).json({ success: true, message: error.message });
     }

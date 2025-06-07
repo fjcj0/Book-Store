@@ -10,6 +10,10 @@ const requestSchema = new mongoose.Schema({
         ref: 'Book',
         required: true,
     },
+    toDate: {
+        type: Date,
+        required: true,
+    },
     message: {
         type: String,
         default: '',
