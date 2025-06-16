@@ -11,6 +11,8 @@ export const addBook = async (request, response) => {
         if (!name || !quantity || !description || !file) {
             return response.status(400).json({ success: false, message: 'All fields are required!' });
         }
+        const findBookName = await Book.findOne({ name: name });
+        if (findBookName) return response.status(400).json({ success: false, message: 'Book is on collection!!' });
         const uploadResult = await new Promise((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(
                 { folder: 'books' },
