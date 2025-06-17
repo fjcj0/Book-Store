@@ -3,7 +3,7 @@ import { useBookStore } from '../../store/bookStore.js';
 import { toast } from 'react-hot-toast';
 import Loader from '../../tools/Loader.jsx';
 const AddBookPage = () => {
-    const { error, addBook, success, message, isLoading } = useBookStore();
+    const { error, addBook, success, isLoading } = useBookStore();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [quantity, setQuantity] = useState(0);

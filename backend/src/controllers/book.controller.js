@@ -105,7 +105,13 @@ export const editBook = async (request, response) => {
         if (!book) {
             return response.status(404).json({ success: false, message: 'Book not found!' });
         }
-        if (newName) book.name = newName;
+        if (newName) {
+            const findBookByName = await Book.findOne({ name: newName });
+            if (findBookByName) {
+                return response.status(400).json({ success: false, message: 'there is a book with same name try another name please!!' });
+            }
+            book.name = newName;
+        }
         if (newQuantity) book.quantity = newQuantity;
         if (newDescription) book.description = newDescription;
         if (newPicture) {
@@ -126,8 +132,7 @@ export const editBook = async (request, response) => {
         await book.save();
         return response.status(200).json({
             success: true,
-            message: 'Book has been updated successfully!',
-            book
+            message: 'Book has been updated successfully!'
         });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });
