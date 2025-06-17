@@ -4,6 +4,7 @@ import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useBookStore } from '../../store/bookStore.js';
 import { toast } from 'react-hot-toast';
 import Loader from '../../tools/Loader.jsx';
+import { Link } from 'react-router';
 const EditBooksPage = () => {
     const { Books, books, deleteBook, success } = useBookStore();
     const [deletingBookId, setDeletingBookId] = useState(null);
@@ -48,9 +49,11 @@ const EditBooksPage = () => {
                                 </div>
                                 <h1 className='text-center font-josefin text-orange-500'>{book.name}</h1>
                                 <div className='flex items-center justify-center flex-wrap gap-3'>
-                                    <button type='button' className='btn btn-primary font-josefin'>
-                                        <FontAwesomeIcon icon={faEdit} />
-                                    </button>
+                                    <Link to={`/admin/editbook/${book._id}`}>
+                                        <button type='button' className='btn btn-primary font-josefin'>
+                                            <FontAwesomeIcon icon={faEdit} />
+                                        </button>
+                                    </Link>
                                     <button
                                         onClick={() => deleteBookOnClick(book._id)}
                                         type='button'
