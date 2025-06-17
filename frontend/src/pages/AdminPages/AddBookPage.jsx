@@ -17,7 +17,7 @@ const AddBookPage = () => {
         try {
             await addBook(name, quantity, description, picture);
             if (success == true) {
-                toast.success(message);
+                toast.success('Book has been added successfully!!');
             }
             setName('');
             setDescription('');

@@ -53,22 +53,26 @@ export const books = async (request, response) => {
     }
 };
 export const deleteBook = async (request, response) => {
-    const { bookId } = request.body;
-    console.log(bookId);
+    const { bookId } = request.query;
+    console.log('Book ID:', bookId);
+
     try {
         if (!bookId) {
             return response.status(400).json({ success: false, message: 'Id is required!!' });
         }
+
         const book = await Book.findById(bookId);
         if (!book) {
             return response.status(404).json({ success: false, message: 'Book not found' });
         }
+
         const publicId = getPublicIdFromUrl(book.picture);
         await cloudinary.uploader.destroy(publicId);
         await Request.deleteMany({ book: bookId });
         await SavedBook.deleteMany({ book: bookId });
         await BorrowedBook.deleteMany({ book: bookId });
         await Book.findByIdAndDelete(bookId);
+
         return response.status(200).json({ success: true, message: 'Book deleted successfully' });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });

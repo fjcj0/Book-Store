@@ -8,7 +8,7 @@ export const useBookStore = create((set) => ({
     books: null,
     message: null,
     addBook: async (name, quantity, description, picture) => {
-        set({ isLoading: true, error: null, success: false });
+        set({ isLoading: true, error: null, success: false, message: null });
         try {
             const formData = new FormData();
             formData.append('name', name);
@@ -62,4 +62,26 @@ export const useBookStore = create((set) => ({
             throw new Error(error?.response?.data?.message || error?.message);
         }
     },
+    deleteBook: async (bookId) => {
+        set({ isLoading: true, error: null, success: false, message: null });
+        try {
+            const response = await axios.delete(
+                `${import.meta.env.VITE_API_BOOK_URL}/delete-book`,
+                { params: { bookId } }
+            );
+            set({
+                isLoading: false,
+                success: true,
+                message: response?.data?.message,
+            });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                isLoading: false,
+                success: false,
+                message: null,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    }
 }));

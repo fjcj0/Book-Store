@@ -1,17 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useBookStore } from '../../store/bookStore.js';
+import { toast } from 'react-hot-toast';
+import Loader from '../../tools/Loader.jsx';
 const EditBooksPage = () => {
-    const { Books, books, message } = useBookStore();
+    const { Books, books, deleteBook, success } = useBookStore();
+    const [deletingBookId, setDeletingBookId] = useState(null);
     useEffect(() => {
         Books();
-    }, []);
-    if (message) return (
-        <div className='h-screen flex items-center justify-center'>
-            <h1 className='text-center font-josefin text-md text-red-500'>{message}</h1>
-        </div>
-    );
+    }, [books]);
+    const deleteBookOnClick = async (id) => {
+        setDeletingBookId(id);
+        try {
+            await deleteBook(id);
+            if (success) toast.success('Book has been deleted successfully!!');
+        } catch (error) {
+            toast.error(error.message);
+        } finally {
+            setDeletingBookId(null);
+        }
+    };
     return (
         <div className='min-h-screen p-4'>
             <label className="input mb-5 flex items-center gap-2 border p-2 rounded-lg bg-white shadow-md">
@@ -30,22 +39,30 @@ const EditBooksPage = () => {
                     <h1>Action</h1>
                 </div>
                 {books?.length > 0 ? (
-                    books.map((book) => (
-                        <div key={book._id} className='my-4 grid grid-cols-3 items-center gap-5 border-b py-2'>
-                            <div className='flex justify-center'>
-                                <img src={book.picture} alt={book.name} className='h-[3rem] w-[3rem] rounded-full object-cover' />
+                    books.map((book) => {
+                        const isDeleting = deletingBookId === book._id;
+                        return (
+                            <div key={book._id} className='my-4 grid grid-cols-3 items-center gap-5 border-b py-2'>
+                                <div className='flex justify-center'>
+                                    <img src={book.picture} alt={book.name} className='h-[3rem] w-[3rem] rounded-full object-cover' />
+                                </div>
+                                <h1 className='text-center font-josefin text-orange-500'>{book.name}</h1>
+                                <div className='flex items-center justify-center flex-wrap gap-3'>
+                                    <button type='button' className='btn btn-primary font-josefin'>
+                                        <FontAwesomeIcon icon={faEdit} />
+                                    </button>
+                                    <button
+                                        onClick={() => deleteBookOnClick(book._id)}
+                                        type='button'
+                                        disabled={isDeleting}
+                                        className={`btn btn-error font-josefin ${isDeleting ? 'opacity-50' : ''}`}
+                                    >
+                                        {isDeleting ? <Loader /> : <FontAwesomeIcon icon={faTrash} />}
+                                    </button>
+                                </div>
                             </div>
-                            <h1 className='text-center font-josefin text-orange-500'>{book.name}</h1>
-                            <div className='flex items-center justify-center flex-wrap gap-3'>
-                                <button type='button' className='btn btn-primary font-josefin'>
-                                    <FontAwesomeIcon icon={faEdit} />
-                                </button>
-                                <button type='button' className='btn btn-error font-josefin'>
-                                    <FontAwesomeIcon icon={faTrash} />
-                                </button>
-                            </div>
-                        </div>
-                    ))
+                        );
+                    })
                 ) : (
                     <div className='text-center mt-5 text-gray-500 font-josefin'>No books found.</div>
                 )}
