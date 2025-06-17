@@ -40,6 +40,18 @@ export const addBook = async (request, response) => {
         return response.status(500).json({ success: false, message: error.message });
     }
 };
+export const books = async (request, response) => {
+    try {
+        const Books = await Book.find({});
+        if (Books.length == 0) {
+            return response.status(200).json({ success: true, message: 'enough book!!' });
+        }
+        return response.status(201).json(Books);
+    } catch (error) {
+        console.error('Upload error:', error);
+        return response.status(500).json({ success: false, message: error.message });
+    }
+};
 export const deleteBook = async (request, response) => {
     const { bookId } = request.body;
     console.log(bookId);
