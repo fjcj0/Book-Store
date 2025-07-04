@@ -69,4 +69,36 @@ export const useAuthStore = create((set) => ({
             throw new Error(error.response?.data?.message || error.message);
         }
     },
+    editUser: async (userId, newUsername, newName, newProfilePicture) => {
+        set({ error: null, isLoading: true });
+        try {
+            const formData = new FormData();
+            formData.append('userId', userId);
+            if (newName) formData.append('newName', newName);
+            if (newUsername) formData.append('newUsername', newUsername);
+            if (newProfilePicture) formData.append('profilePicture', newProfilePicture);
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_USER_URL}/edit-user`,
+                formData,
+                {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                }
+            );
+
+            // ✅ update user in store from server response
+            set({
+                user: response.data.user,
+                isAuthenticated: true,
+                isLoading: false,
+            });
+
+        } catch (error) {
+            set({
+                error: error.response?.data?.message || error.message,
+                isLoading: false,
+            });
+            throw new Error(error.response?.data?.message || error.message);
+        }
+    },
 }));

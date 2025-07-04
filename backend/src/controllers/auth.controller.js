@@ -172,7 +172,13 @@ export const editUser = async (request, response) => {
         if (!user) {
             return response.status(404).json({ success: false, message: 'User not found.' });
         }
-        if (newUsername) user.username = newUsername;
+        if (newUsername) {
+            const checkUserName = await User.find({ username: newUsername });
+            if (checkUserName) {
+                return response.status(404).json({ success: false, message: 'Username is repeated!!' });
+            }
+            user.username = newUsername;
+        }
         if (newName) user.name = newName;
         if (newProfilePicture) {
             const uploadResult = await new Promise((resolve, reject) => {
@@ -201,7 +207,7 @@ export const editUser = async (request, response) => {
                     : newName
                         ? 'Name'
                         : 'Profile picture'
-                } has been changed successfully!`
+                } has been changed successfully!`, user
         });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });
