@@ -3,13 +3,28 @@ import { BorrowedBook } from '../models/borrowedbook.model.js';
 import { Book } from '../models/book.model.js';
 export const requests = async (request, response) => {
     try {
-        const request = await Request.find({});
-        if (!request || request.length == 0) {
-            return response.status(200).json({ success: true, message: 'there is no request!!' });
+        const requestsList = await Request.find({})
+            .populate({
+                path: 'user',
+            })
+            .populate({
+                path: 'book',
+            });
+        if (!requestsList || requestsList.length === 0) {
+            return response.status(200).json({
+                success: true,
+                message: 'There is no request!!'
+            });
         }
-        return response.status(200).json({ success: true, request });
+        return response.status(200).json({
+            success: true,
+            requests: requestsList
+        });
     } catch (error) {
-        return response.status(200).json({ success: false, message: error.message });
+        return response.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 export const addRequest = async (request, response) => {

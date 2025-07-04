@@ -16,5 +16,5 @@ router.delete('/delete-saved-book-user', verifyToken, deleteSavedBook);
 router.post('/add-borrowed-book-user', verifyToken, addBorrowedBookUser);
 router.post('/borrowed-books-user', verifyToken, borrowedBooksUser);
 router.delete('/delete-borrowed-book', deleteBorrowedBook);
-router.post('/borrowed-books', borrowedBooks);
+router.get('/borrowed-books', borrowedBooks);
 export default router;

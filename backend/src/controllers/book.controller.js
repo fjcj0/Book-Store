@@ -166,28 +166,56 @@ export const addBorrowedBookUser = async (request, response) => {
 };
 export const borrowedBooks = async (request, response) => {
     try {
-        const borrowedBook = await BorrowedBook.find({});
+        const borrowedBook = await BorrowedBook.find({})
+            .populate({
+                path: 'book',
+            })
+            .populate({
+                path: 'user',
+            });
         if (!borrowedBook || borrowedBook.length === 0) {
-            return response.status(200).json({ success: true, message: 'No borrowed books found!!' });
+            return response.status(200).json({
+                success: true,
+                message: 'No borrowed books found!!'
+            });
         }
-        return response.status(200).json({ success: true, borrowedBook });
+        return response.status(200).json({
+            success: true,
+            borrowedBook
+        });
     } catch (error) {
-        return response.status(500).json({ success: false, message: error.message });
+        return response.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 export const borrowedBooksUser = async (request, response) => {
     const { userId } = request.body;
     try {
         if (!userId) {
-            return response.status(400).json({ success: false, message: 'Id doesnt exist!!' });
+            return response.status(400).json({ success: false, message: 'Id doesn\'t exist!!' });
         }
-        const BorrowedBooksOfUser = await BorrowedBook.find({ user: userId });
-        if (!BorrowedBooksOfUser || BorrowedBooksOfUser.length == 0) {
-            return response.status(200).json({ success: true, message: 'No borrowed Books for this user!!' });
+        const BorrowedBooksOfUser = await BorrowedBook.find({ user: userId })
+            .populate({
+                path: 'book',
+            });
+        if (!BorrowedBooksOfUser || BorrowedBooksOfUser.length === 0) {
+            return response.status(200).json({
+                success: true,
+                message: 'No borrowed books for this user!!'
+            });
         }
-        return response.status(201).json({ success: true, BorrowedBooksOfUser });
+        return response.status(200).json({
+            success: true,
+            BorrowedBooksOfUser
+        });
+
     } catch (error) {
-        return response.status(500).json({ success: false, message: error.message });
+        return response.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 export const deleteBorrowedBook = async (request, response) => {
@@ -228,15 +256,27 @@ export const savedBookUser = async (request, response) => {
     const { userId } = request.body;
     try {
         if (!userId) {
-            return response.status(400).json({ success: false, message: 'saved Books of user not found!!' });
+            return response.status(400).json({ success: false, message: 'User ID is required!' });
         }
-        const savedBooksOfUser = await SavedBook.find({ user: userId });
-        if (!savedBooksOfUser || savedBookUser.length == 0) {
-            return response.status(200).json({ success: true, message: 'No saved books for this user!!' });
+        const savedBooksOfUser = await SavedBook.find({ user: userId })
+            .populate({
+                path: 'book',
+            });
+        if (!savedBooksOfUser || savedBooksOfUser.length === 0) {
+            return response.status(200).json({
+                success: true,
+                message: 'No saved books for this user!!'
+            });
         }
-        return response.status(201).json({ success: true, savedBooksOfUser });
+        return response.status(200).json({
+            success: true,
+            savedBooksOfUser
+        });
     } catch (error) {
-        return response.status(500).json({ success: false, message: error.message });
+        return response.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 export const deleteSavedBook = async (request, response) => {
