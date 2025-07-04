@@ -4,7 +4,10 @@ axios.defaults.withCredentials = true;
 export const useBookStore = create((set) => ({
     error: null,
     isLoading: false,
+    isLoadingBook: false,
     success: false,
+    isFoundBook: false,
+    book: null,
     books: null,
     message: null,
     addBook: async (name, quantity, description, picture) => {
@@ -83,5 +86,62 @@ export const useBookStore = create((set) => ({
             });
             throw new Error(error?.response?.data?.message || error?.message);
         }
-    }
+    },
+    findBook: async (bookId) => {
+        set({ error: null, success: false, isFoundBook: false, book: null, isLoadingBook: true });
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BOOK_URL}/find-book`
+                , {
+                    bookId
+                });
+            set({
+                isFoundBook: true,
+                success: true,
+                book: response?.data?.book,
+                error: null,
+                isLoadingBook: false
+            });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                success: false,
+                isFoundBook: false,
+                book: null,
+                isLoadingBook: false
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
+    editBook: async (bookId, newName, newQuantity, newDescription, newPicture) => {
+        set({ isLoading: true, error: null, success: false, message: null });
+        try {
+            const formData = new FormData();
+            formData.append('bookId', bookId);
+            if (newName) formData.append('newName', newName);
+            if (newQuantity) formData.append('newQuantity', newQuantity);
+            if (newDescription) formData.append('newDescription', newDescription);
+            if (newPicture) formData.append('newPicture', newPicture);
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BOOK_URL}/edit-book`,
+                formData,
+                {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                }
+            );
+            set({
+                isLoading: false,
+                success: true,
+                message: response?.data?.message,
+            });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                success: false,
+                isLoading: false,
+                message: error?.response?.data?.message,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
 }));
