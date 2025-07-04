@@ -1,5 +1,7 @@
 import { User } from '../models/user.model.js';
 import bcryptjs from 'bcryptjs';
+import cloudinary from '../utils/cloudinary.js';
+import { getPublicIdFromUrl } from '../utils/getPublicFormUrl.js';
 import crypto from 'crypto';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie.js';
 import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } from '../mail/emails.js';
@@ -154,39 +156,54 @@ export const resetPassword = async (request, response) => {
     }
 };
 export const editUser = async (request, response) => {
-    const { newUsername, newName, id } = request.body;
+    const { newUsername, newName, userId } = request.body;
+    const newProfilePicture = request.file;
     try {
-        if (id) {
-            if (!newUsername && !newName) {
-                return response.status(400).json({
-                    success: false,
-                    message: 'At least one field (username or name) must be provided to edit.'
-                });
-            }
-            const user = await User.findById(id);
-            if (!user) {
-                return response.status(404).json({
-                    success: false,
-                    message: 'User not found.'
-                });
-            }
-            if (newUsername) user.username = newUsername;
-            if (newName) user.name = newName;
-            await user.save();
-            return response.status(200).json({
-                success: true,
-                message: `${newUsername && newName
-                    ? 'Username and name'
-                    : newUsername
-                        ? 'Username'
-                        : 'Name'} has been changed successfully!`
+        if (!userId) {
+            return response.status(400).json({ success: false, message: "User ID is required." });
+        }
+        if (!newUsername && !newName && !newProfilePicture) {
+            return response.status(400).json({
+                success: false,
+                message: 'At least one field (username, name, or picture) must be provided.'
             });
         }
-        return response.status(400).json({ success: false, message: "error user not found!!" });
-    } catch (error) {
-        return response.status(500).json({
-            success: false,
-            message: error.message
+        const user = await User.findById(userId);
+        if (!user) {
+            return response.status(404).json({ success: false, message: 'User not found.' });
+        }
+        if (newUsername) user.username = newUsername;
+        if (newName) user.name = newName;
+        if (newProfilePicture) {
+            const uploadResult = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: 'books' },
+                    (error, result) => {
+                        if (error) return reject(error);
+                        resolve(result);
+                    }
+                );
+                stream.end(newProfilePicture.buffer);
+            });
+            if (user.profilePicture && user.profilePicture !== '/') {
+                const publicId = getPublicIdFromUrl(user.profilePicture);
+                await cloudinary.uploader.destroy(publicId);
+            }
+            user.profilePicture = uploadResult.secure_url;
+        }
+        await user.save();
+        return response.status(200).json({
+            success: true,
+            message: `${newUsername && newName
+                ? 'Username and name'
+                : newUsername
+                    ? 'Username'
+                    : newName
+                        ? 'Name'
+                        : 'Profile picture'
+                } has been changed successfully!`
         });
+    } catch (error) {
+        return response.status(500).json({ success: false, message: error.message });
     }
 };
