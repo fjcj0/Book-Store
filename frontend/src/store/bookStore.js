@@ -10,6 +10,7 @@ export const useBookStore = create((set) => ({
     book: null,
     books: null,
     message: null,
+    savedBooks: null,
     addBook: async (name, quantity, description, picture) => {
         set({ isLoading: true, error: null, success: false, message: null });
         try {
@@ -140,6 +141,68 @@ export const useBookStore = create((set) => ({
                 success: false,
                 isLoading: false,
                 message: error?.response?.data?.message,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
+    addSavedBook: async (userId, bookId) => {
+        set({ isLoading: false, error: null, success: false, message: null });
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BOOK_URL}/add-saved-book-user`,
+                {
+                    userId, bookId
+                }
+            );
+            set({ message: response?.data?.message, error: null, isLoading: false, success: true });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                success: false,
+                isLoading: false,
+                message: error?.response?.data?.message,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
+    savedBooksUser: async (userId) => {
+        set({ isLoading: false, success: false, message: null });
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BOOK_URL}/saved-books-user`,
+                {
+                    userId
+                }
+            );
+            set({ savedBooks: response?.data?.savedBooksOfUser, isLoading: false, success: true });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                success: false,
+                isLoading: false,
+                message: error?.response?.data?.message,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
+    deleteSavedBookUser: async (savedBookId) => {
+        set({ isLoading: true, error: null, success: false, message: null });
+        try {
+            const response = await axios.delete(
+                `${import.meta.env.VITE_API_BOOK_URL}/delete-saved-book-user`,
+                { params: { savedBookId } }
+            );
+            set({
+                isLoading: false,
+                success: true,
+                message: response?.data?.message,
+            });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                isLoading: false,
+                success: false,
+                message: null,
             });
             throw new Error(error?.response?.data?.message || error?.message);
         }

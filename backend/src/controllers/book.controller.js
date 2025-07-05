@@ -239,12 +239,23 @@ export const addSavedBookUser = async (request, response) => {
         if (!userId || !bookId) {
             return response.status(400).json({ success: false, message: 'UserId or BookId are missed!!' });
         }
+        const alreadySaved = await SavedBook.findOne({ user: userId, book: bookId });
+        if (alreadySaved) {
+            return response.status(409).json({
+                success: false,
+                message: 'Book is already saved by the user!!'
+            });
+        }
         const newSavedBookUser = new SavedBook({
             user: userId,
             book: bookId
         });
         await newSavedBookUser.save();
-        return response.status(200).json({ success: true, message: 'Book has been added successfully!!', newSavedBookUser });
+        return response.status(200).json({
+            success: true,
+            message: 'Book has been added successfully!!',
+            newSavedBookUser
+        });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });
     }
@@ -277,7 +288,7 @@ export const savedBookUser = async (request, response) => {
     }
 };
 export const deleteSavedBook = async (request, response) => {
-    const { savedBookId } = request.body;
+    const { savedBookId } = request.query;
     try {
         if (!savedBookId) {
             return response.status(400).json({ success: false, message: 'saved Book of user not found!!' });
