@@ -1,10 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { useParams } from 'react-router-dom';
-const BookCard = ({ name, description, img }) => {
-    const { id } = useParams();
+const BookCard = ({ name, description, img, id }) => {
     return (
-        <div className='w-[20rem] h-[30rem] rounded-md bg-white flex flex-col'>
+        <div className='w-[20rem] h-[33rem] pb-2 rounded-md bg-white flex flex-col'>
             <div className='w-full h-[50%] flex items-center justify-center'>
                 <img
                     src={img}
