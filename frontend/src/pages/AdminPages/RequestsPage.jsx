@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { useRequestStore } from '../../store/requestStore.js';
 const RequestsPage = () => {
+    const { Requests, requests } = useRequestStore();
+    useEffect(() => {
+        Requests();
+    }, [requests]);
     return (
         <div className='h-screen'>
             <label className="input">
@@ -20,22 +25,35 @@ const RequestsPage = () => {
                     <h1 className='font-bold font-poppins'>User Name</h1>
                     <h1 className='font-bold font-poppins'>Action</h1>
                 </div>
-                <div className='my-5 grid grid-cols-4 gap-5'>
-                    <div className='flex justify-center'>
-                        <img src='https://images.unsplash.com/photo-1746555702228-5c4f5436d4b7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw1fHx8ZW58MHx8fHx8' className='h-[3rem] w-[3rem] rounded-full' />
-                    </div>
-                    <h1 className='text-center font-bold font-josefin text-orange-500'>Sandrella</h1>
-                    <h1 className='text-center font-bold font-josefin text-orange-500'>Frandelro</h1>
-                    <div className='flex items-center justify-center flex-wrap gap-3'>
-                        <button type='button' className='btn btn-error font-josefin'>
-                            <FontAwesomeIcon icon={faXmark} />
-                        </button>
-                        <button type='button' className='btn btn-success text-white font-josefin'>
-                            <FontAwesomeIcon icon={faCheck} />
-                        </button>
-
-                    </div>
-                </div>
+                {requests && requests.length > 0 ? (
+                    requests.map((req) => (
+                        <div key={req._id} className='my-5 grid grid-cols-4 gap-5 items-center'>
+                            <div className='flex justify-center'>
+                                <img
+                                    src={req.book?.picture}
+                                    className='h-[3rem] w-[3rem] rounded-full object-cover'
+                                    alt='Book'
+                                />
+                            </div>
+                            <h1 className='text-center font-bold font-josefin text-orange-500'>
+                                {req.book?.name}
+                            </h1>
+                            <h1 className='text-center font-bold font-josefin text-orange-500'>
+                                {req.user?.username}
+                            </h1>
+                            <div className='flex items-center justify-center flex-wrap gap-3'>
+                                <button type='button' className='btn btn-error font-josefin'>
+                                    <FontAwesomeIcon icon={faXmark} />
+                                </button>
+                                <button type='button' className='btn btn-success text-white font-josefin'>
+                                    <FontAwesomeIcon icon={faCheck} />
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <h1 className="mt-5 text-center text-gray-400">No requests found.</h1>
+                )}
             </div>
         </div>
     );

@@ -11,7 +11,7 @@ export const requests = async (request, response) => {
                 path: 'book',
             });
         if (!requestsList || requestsList.length === 0) {
-            return response.status(200).json({
+            return response.status(400).json({
                 success: true,
                 message: 'There is no request!!'
             });
