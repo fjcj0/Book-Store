@@ -31,19 +31,19 @@ export const addRequest = async (request, response) => {
     const { bookId, userId, toDate } = request.body;
     try {
         if (!bookId || !userId || !toDate) {
-            return response.status(400).json({ success: false, message: 'BookId and userId and toDaTE are required fields!!' });
+            return response.status(401).json({ success: false, message: 'BookId and userId and toDaTE are required fields!!' });
         }
         const checkRequest = await Request.findOne({ book: bookId, user: userId });
         if (checkRequest) {
-            return response.status(200).json({ success: true, message: 'this book is requested before successfully be waiting until the admin accept your request!!' });
+            return response.status(401).json({ success: false, message: 'this book is requested before successfully be waiting until the admin accept your request!!' });
         }
         const checkBorrowedBook = await BorrowedBook.findOne({ book: bookId, user: userId });
         if (checkBorrowedBook) {
-            return response.status(200).json({ success: true, message: 'this book is borrowed before successfully be waiting until the admin accept your request!!' });
+            return response.status(401).json({ success: false, message: 'this book is borrowed before successfully be waiting until the admin accept your request!!' });
         }
         const book = await Book.findById(bookId);
         if (book.quantity == 0) {
-            return response.status(400).json({ success: false, message: 'There is no enough book' });
+            return response.status(401).json({ success: false, message: 'There is no enough book' });
         }
         const request = new Request({
             book: bookId,

@@ -3,6 +3,7 @@ import { useBookStore } from '../../store/bookStore.js';
 import { useParams } from 'react-router-dom';
 import Loader from '../../tools/Loader.jsx';
 import { useAuthStore } from '../../store/authStore.js';
+import { useRequestStore } from '../../store/requestStore.js';
 import { toast } from 'react-hot-toast';
 const BookPage = () => {
     const today = new Date();
@@ -23,13 +24,19 @@ const BookPage = () => {
         await savedBooksUser(user._id);
         toast.success('Book added successfully!!');
     };
+    const { addRequest, isLoadingRequest, errorRequest } = useRequestStore();
+    const submitAddRequest = async (e) => {
+        e.preventDefault();
+        await addRequest(id, user._id, selectedDate);
+        toast.success('your request has been sent wait until admin accept your request!!');
+    };
     if (isFoundBook == false) {
         return (
             <div className='w-screen h-screen flex items-center justify-center'>
                 <p className={`text-center text-red-600 font-josefin text-4xl ${isLoadingBook ? 'hidden' : ''}`}>Error 404 Not Found</p>
             </div>
         );
-    }
+    };
     return (
         <div className='w-full flex items-center justify-center min-h-screen'>
             <div className='w-full max-w-3xl my-3 lg:max-w-none lg:w-[95%] bg-white lg:rounded-md flex flex-col lg:flex-row items-center justify-between'>
@@ -41,7 +48,7 @@ const BookPage = () => {
                     />
                 </div>
                 <div className='w-full lg:w-[50%] h-full flex flex-col items-start justify-start p-3'>
-                    <h1 className='font-bold text-green-500 text-3xl font-mochiy'>Sndrella</h1>
+                    <h1 className='font-bold text-green-500 text-3xl font-mochiy'>{book.name}</h1>
                     <p className='text-black my-3 font-josefin text-sm'>
                         {book.description}
                     </p>
@@ -67,11 +74,14 @@ const BookPage = () => {
                         </div>
                     </div>
                     <button
+                        onClick={submitAddRequest}
+                        disabled={isLoadingRequest}
                         type='button'
-                        className='px-4 py-3 bg-blue-600 hover:bg-blue-900 text-white font-bold font-poppins rounded-md duration-300'>
-                        Borrow Book
+                        className={`px-4 py-3 bg-blue-600 hover:bg-blue-900 text-white font-bold font-poppins rounded-md duration-300 ${isLoadingRequest ? 'opacity-50' : ''}`}>
+                        {isLoadingRequest ? <Loader /> : 'Borrow Book'}
                     </button>
                     <p className='mt-3 text-red-600 text-sm font-josefin'>{error}</p>
+                    <p className='mt-3 text-red-600 text-sm font-josefin'>{errorRequest}</p>
                 </div>
             </div>
         </div>
