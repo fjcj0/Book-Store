@@ -2,11 +2,20 @@ import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useRequestStore } from '../../store/requestStore.js';
+import { useAuthStore } from '../../store/authStore.js';
+import Loader from '../../tools/Loader.jsx';
+import { toast } from 'react-hot-toast';
 const RequestsPage = () => {
-    const { Requests, requests } = useRequestStore();
+    const { Requests, requests, approveRequest, isLoading } = useRequestStore();
+    const { user } = useAuthStore();
     useEffect(() => {
         Requests();
-    }, [requests]);
+    }, []);
+    const SubmitApproveRequest = async (e, bookId) => {
+        e.preventDefault();
+        await approveRequest(bookId, user._id);
+        toast.success('Book request has been accepted!!');
+    };
     return (
         <div className='h-screen'>
             <label className="input">
@@ -25,6 +34,7 @@ const RequestsPage = () => {
                     <h1 className='font-bold font-poppins'>User Name</h1>
                     <h1 className='font-bold font-poppins'>Action</h1>
                 </div>
+
                 {requests && requests.length > 0 ? (
                     requests.map((req) => (
                         <div key={req._id} className='my-5 grid grid-cols-4 gap-5 items-center'>
@@ -36,17 +46,26 @@ const RequestsPage = () => {
                                 />
                             </div>
                             <h1 className='text-center font-bold font-josefin text-orange-500'>
-                                {req.book?.name}
+                                {req?.book?.name}
                             </h1>
                             <h1 className='text-center font-bold font-josefin text-orange-500'>
-                                {req.user?.username}
+                                {req?.user?.username}
                             </h1>
                             <div className='flex items-center justify-center flex-wrap gap-3'>
-                                <button type='button' className='btn btn-error font-josefin'>
-                                    <FontAwesomeIcon icon={faXmark} />
+                                <button
+                                    type="button"
+                                    className={`btn btn-error font-josefin ${isLoading ? 'opacity-50' : ''}`}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? <Loader /> : <FontAwesomeIcon icon={faXmark} />}
                                 </button>
-                                <button type='button' className='btn btn-success text-white font-josefin'>
-                                    <FontAwesomeIcon icon={faCheck} />
+                                <button
+                                    onClick={(e) => SubmitApproveRequest(e, req?.book?._id)}
+                                    type="button"
+                                    className={`btn btn-success text-white font-josefin ${isLoading ? 'opacity-50' : ''}`}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? <Loader /> : <FontAwesomeIcon icon={faCheck} />}
                                 </button>
                             </div>
                         </div>

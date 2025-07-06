@@ -79,14 +79,14 @@ export const approveRequest = async (request, response) => {
         if (!bookId || !userId) {
             return response.status(400).json({ success: false, message: 'bookId and userId are required fields!!' });
         }
-        const request = await Request.findOne({ book: bookId, user: userId });
-        if (request) {
-            const toDate = request.toDate;
+        const theRequest = await Request.findOne({ book: bookId, user: userId });
+        if (theRequest) {
+            const toDate = theRequest.toDate;
             const checkBorrowedBook = await BorrowedBook.findOne({ user: userId, book: bookId });
             if (checkBorrowedBook) return response.status(200).json({ success: true, message: 'This book is added before!!' });
             const book = await Book.findById(bookId);
             if (book.quantity == 0) {
-                return response.status(400).json({ success: false, message: 'There is no enough book' });
+                return response.status(400).json({ success: false, message: 'There is no enough book!!' });
             }
             const newBorrowedBook = new BorrowedBook({
                 book: bookId,
