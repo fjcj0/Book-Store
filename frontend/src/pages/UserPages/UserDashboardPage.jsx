@@ -101,6 +101,29 @@ const UserDashboardPage = () => {
                     <p className='text-sm mt-4 text-red-600 font-josefin'>{error}</p>
                 </div>
             </div>
+            <div>
+                <h1 className='text-center font-bold font-mochiy text-3xl '>borrowed books</h1>
+                <div className='flex items-start justify-start'>
+                    <div className='w-[20rem] h-[20rem] bg-white m-3 rounded-xl'>
+                        <div className='w-full h-[60%]'>
+                            <img
+                                src='https://plus.unsplash.com/premium_photo-1669652639337-c513cc42ead6?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Ym9va3xlbnwwfHwwfHx8MA%3D%3D'
+                                className='w-full h-full object-cover rounded-t-xl'
+                                alt="Book cover"
+                            />
+                        </div>
+                        <div className='flex flex-col justify-between h-[40%] w-full py-3'>
+                            <div className='name'>
+                                <p className='font-josefin text-black mx-3 font-bold text-2xl'> Sandrella</p>
+                            </div>
+                            <div className='statusandtime font-josefin flex items-center justify-between text-black'>
+                                <p className='mx-3 text-yellow-500'>Pending</p>
+                                <p className='mx-3'>12/2/2026</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
