@@ -16,6 +16,7 @@ import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/AuthStore.js';
 import Loader from './tools/Loader.jsx';
 import UserDashboardPage from './pages/UserPages/UserDashboardPage.jsx';
+import BorrowedBooksPage from './pages/AdminPages/BorrowedBooksPage.jsx';
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated) {
@@ -65,6 +66,7 @@ const App = () => {
           <Route path="/admin/editbooks" element={<EditBooksPage />} />
           <Route path="/admin/editbook/:id" element={<EditBookPage />} />
           <Route path="/admin/requests" element={<RequestsPage />} />
+          <Route path="/admin/borrowedbooks" element={<BorrowedBooksPage />} />
         </Route>
         <Route path="/signin" element={
           <RedirectAuthenticatedUser>

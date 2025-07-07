@@ -74,7 +74,7 @@ const RequestsPage = () => {
                         </div>
                     ))
                 ) : (
-                    <h1 className="mt-5 text-center text-gray-400">No requests found.</h1>
+                    <h1 className="mt-5 text-center text-gray-400">No requests found!!</h1>
                 )}
             </div>
         </div>
