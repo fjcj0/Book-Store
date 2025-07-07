@@ -232,6 +232,26 @@ export const deleteBorrowedBook = async (request, response) => {
         return response.status(500).json({ success: true, message: error.message });
     }
 };
+export const returnBook = async (request, response) => {
+    const { borrowedBookId, bookId } = request.body;
+    try {
+        if (!borrowedBookId || !bookId) {
+            return response.status(400).json({ success: false, message: 'bookId and borrowedBookId not exist!!' });
+        }
+        const checkBorrowedBook = await BorrowedBook.findById(borrowedBookId);
+        if (!checkBorrowedBook) return response.status(400).json({ success: false, message: 'This book is not found!!' });
+        const book = await Book.findById(bookId);
+        if (checkBorrowedBook.returned == false) {
+            book.quantity = book.quantity + 1;
+            checkBorrowedBook.returned = true;
+            await checkBorrowedBook.save();
+        }
+        await book.save();
+        return response.status(200).json({ success: true, message: 'Borrowed Book has been returned successfully!!' });
+    } catch (error) {
+        return response.status(500).json({ success: true, message: error.message });
+    }
+};
 
 export const addSavedBookUser = async (request, response) => {
     const { userId, bookId } = request.body;

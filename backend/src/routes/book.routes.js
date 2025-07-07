@@ -1,5 +1,5 @@
 import express from 'express';
-import { addBook, addBorrowedBookUser, addSavedBookUser, books, borrowedBooks, borrowedBooksUser, deleteBook, deleteBorrowedBook, deleteSavedBook, editBook, findBook, savedBookUser } from '../controllers/book.controller.js';
+import { addBook, addBorrowedBookUser, addSavedBookUser, books, borrowedBooks, borrowedBooksUser, deleteBook, deleteBorrowedBook, deleteSavedBook, editBook, findBook, returnBook, savedBookUser } from '../controllers/book.controller.js';
 import upload from '../utils/multer.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 const router = express.Router();
@@ -17,4 +17,5 @@ router.post('/add-borrowed-book-user', verifyToken, addBorrowedBookUser);
 router.post('/borrowed-books-user', verifyToken, borrowedBooksUser);
 router.delete('/delete-borrowed-book', deleteBorrowedBook);
 router.get('/borrowed-books', borrowedBooks);
+router.post('/return-borrowed-book', returnBook);
 export default router;

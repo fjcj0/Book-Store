@@ -252,4 +252,33 @@ export const useBookStore = create((set) => ({
             throw new Error(error?.response?.data?.message || error?.message);
         }
     },
+    returnBook: async (bookId, borrowedBookId) => {
+        set({ isLoadingBook: false, error: null, success: false, message: null });
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BOOK_URL}/return-borrowed-book`,
+                {
+                    borrowedBookId, bookId
+                }
+            );
+            const refreshed = await axios.get(
+                `${import.meta.env.VITE_API_BOOK_URL}/borrowed-books`
+            );
+            set({
+                message: response?.data?.message,
+                error: null,
+                isLoadingBook: false,
+                success: true,
+                BorrowedBooks: refreshed?.data?.borrowedBook,
+            });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                success: false,
+                isLoadingBook: false,
+                message: error?.response?.data?.message,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
 }));
