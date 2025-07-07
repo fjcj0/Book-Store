@@ -6,7 +6,7 @@ import { useAuthStore } from '../../store/authStore.js';
 import Loader from '../../tools/Loader.jsx';
 import { toast } from 'react-hot-toast';
 const RequestsPage = () => {
-    const { Requests, requests, approveRequest, isLoading } = useRequestStore();
+    const { Requests, requests, approveRequest, isLoading, rejectRequest } = useRequestStore();
     const { user } = useAuthStore();
     useEffect(() => {
         Requests();
@@ -15,6 +15,11 @@ const RequestsPage = () => {
         e.preventDefault();
         await approveRequest(bookId, user._id);
         toast.success('Book request has been accepted!!');
+    };
+    const SubmitRejectRequest = async (e, requestId) => {
+        e.preventDefault();
+        await rejectRequest(requestId);
+        toast.success('Request has been rejected successfully!!');
     };
     return (
         <div className='h-screen'>
@@ -34,7 +39,6 @@ const RequestsPage = () => {
                     <h1 className='font-bold font-poppins'>User Name</h1>
                     <h1 className='font-bold font-poppins'>Action</h1>
                 </div>
-
                 {requests && requests.length > 0 ? (
                     requests.map((req) => (
                         <div key={req._id} className='my-5 grid grid-cols-4 gap-5 items-center'>
@@ -53,18 +57,17 @@ const RequestsPage = () => {
                             </h1>
                             <div className='flex items-center justify-center flex-wrap gap-3'>
                                 <button
+                                    onClick={(e) => SubmitRejectRequest(e, req._id)}
                                     type="button"
                                     className={`btn btn-error font-josefin ${isLoading ? 'opacity-50' : ''}`}
-                                    disabled={isLoading}
-                                >
+                                    disabled={isLoading}>
                                     {isLoading ? <Loader /> : <FontAwesomeIcon icon={faXmark} />}
                                 </button>
                                 <button
                                     onClick={(e) => SubmitApproveRequest(e, req?.book?._id)}
                                     type="button"
                                     className={`btn btn-success text-white font-josefin ${isLoading ? 'opacity-50' : ''}`}
-                                    disabled={isLoading}
-                                >
+                                    disabled={isLoading}>
                                     {isLoading ? <Loader /> : <FontAwesomeIcon icon={faCheck} />}
                                 </button>
                             </div>

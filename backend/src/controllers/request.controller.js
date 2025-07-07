@@ -31,34 +31,46 @@ export const addRequest = async (request, response) => {
     const { bookId, userId, toDate } = request.body;
     try {
         if (!bookId || !userId || !toDate) {
-            return response.status(401).json({ success: false, message: 'BookId and userId and toDaTE are required fields!!' });
+            return response.status(401).json({ success: false, message: 'BookId, userId, and toDate are required fields!!' });
         }
         const checkRequest = await Request.findOne({ book: bookId, user: userId });
         if (checkRequest) {
-            return response.status(401).json({ success: false, message: 'this book is requested before successfully be waiting until the admin accept your request!!' });
+            return response.status(401).json({
+                success: false,
+                message: 'This book is already requested. Please wait until the admin accepts your request.'
+            });
         }
         const checkBorrowedBook = await BorrowedBook.findOne({ book: bookId, user: userId });
         if (checkBorrowedBook) {
-            return response.status(401).json({ success: false, message: 'this book is borrowed before successfully be waiting until the admin accept your request!!' });
+            return response.status(401).json({
+                success: false,
+                message: 'This book is already borrowed. Please wait until it is returned.'
+            });
         }
         const book = await Book.findById(bookId);
-        if (book.quantity == 0) {
-            return response.status(401).json({ success: false, message: 'There is no enough book' });
+        if (book.quantity === 0) {
+            return response.status(401).json({ success: false, message: 'There are no available copies of this book.' });
         }
-        const request = new Request({
+        const newRequest = new Request({
             book: bookId,
             user: userId,
-            message: 'be waiting your request has been sent',
-            toDate: toDate
+            message: 'Please wait, your request has been sent.',
+            toDate
         });
-        await request.save();
-        return response.status(200).json({ success: true, message: 'Your request has been sent' });
+        await newRequest.save();
+        await newRequest.populate('book');
+        await newRequest.populate('user');
+        return response.status(200).json({
+            success: true,
+            message: 'Your request has been sent.',
+            request: newRequest
+        });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });
     }
 };
 export const rejectRequest = async (request, response) => {
-    const { requestId } = request.body;
+    const { requestId } = request.query;
     try {
         if (!requestId) {
             return response.status(400).json({ success: false, message: 'request id field is required!!' });

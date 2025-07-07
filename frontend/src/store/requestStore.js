@@ -31,15 +31,20 @@ export const useRequestStore = create((set, get) => ({
         }
     },
     addRequest: async (bookId, userId, toDate) => {
+        const { requests } = get();
         set({ isLoadingRequest: true, errorRequest: null, messageRequest: null, successRequest: false });
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_API_REQUEST_URL}/add-request`,
                 {
-                    bookId, userId, toDate,
+                    bookId,
+                    userId,
+                    toDate,
                 }
             );
+            const newRequest = response?.data?.request;
             set({
+                requests: requests ? [...requests, newRequest] : [newRequest],
                 isLoadingRequest: false,
                 successRequest: true,
                 messageRequest: response?.data?.message,
@@ -64,6 +69,32 @@ export const useRequestStore = create((set, get) => ({
             const updatedRequests = requests.filter(
                 (req) => !(req.book._id === bookId && req.user._id === userId)
             );
+            set({
+                requests: updatedRequests,
+                isLoading: false,
+                successRequest: true,
+                messageRequest: response?.data?.message,
+                errorRequest: null,
+            });
+        } catch (error) {
+            set({
+                errorRequest: error.response?.data?.message || error.message,
+                isLoading: false,
+                successRequest: false,
+                messageRequest: null,
+            });
+            throw new Error(error.response?.data?.message || error.message);
+        }
+    },
+    rejectRequest: async (requestId) => {
+        const { requests } = get();
+        set({ isLoading: true, errorRequest: null, successRequest: false, messageRequest: null });
+        try {
+            const response = await axios.delete(
+                `${import.meta.env.VITE_API_REQUEST_URL}/reject-request`,
+                { params: { requestId } }
+            );
+            const updatedRequests = requests.filter(req => req._id !== requestId);
             set({
                 requests: updatedRequests,
                 isLoading: false,
