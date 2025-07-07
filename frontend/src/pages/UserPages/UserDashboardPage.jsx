@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../../store/authStore.js';
 import Loader from '../../tools/Loader.jsx';
+import { useBookStore } from '../../store/bookStore.js';
 const UserDashboardPage = () => {
     const [newName, setNewName] = useState('');
     const [newUserName, setNewUserName] = useState('');
     const [newProfilePicture, setNewProfilePicture] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
-    const { user } = useAuthStore();
+    const { isLoading, error, editUser, user } = useAuthStore();
+    const { borrowedBooksUser, BorrowedBooksUser } = useBookStore();
+    useEffect(() => {
+        borrowedBooksUser(user._id);
+    }, []);
+    console.log(BorrowedBooksUser);
     const handleProfilePictureChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -14,7 +20,6 @@ const UserDashboardPage = () => {
             setPreviewImage(URL.createObjectURL(file));
         }
     };
-    const { isLoading, error, editUser } = useAuthStore();
     const Submit = async (e) => {
         e.preventDefault();
         await editUser(user._id, newUserName, newName, newProfilePicture);
@@ -101,27 +106,49 @@ const UserDashboardPage = () => {
                     <p className='text-sm mt-4 text-red-600 font-josefin'>{error}</p>
                 </div>
             </div>
-            <div>
-                <h1 className='text-center font-bold font-mochiy text-3xl '>borrowed books</h1>
-                <div className='flex items-start justify-start'>
-                    <div className='w-[20rem] h-[20rem] bg-white m-3 rounded-xl'>
-                        <div className='w-full h-[60%]'>
-                            <img
-                                src='https://plus.unsplash.com/premium_photo-1669652639337-c513cc42ead6?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Ym9va3xlbnwwfHwwfHx8MA%3D%3D'
-                                className='w-full h-full object-cover rounded-t-xl'
-                                alt="Book cover"
-                            />
-                        </div>
-                        <div className='flex flex-col justify-between h-[40%] w-full py-3'>
-                            <div className='name'>
-                                <p className='font-josefin text-black mx-3 font-bold text-2xl'> Sandrella</p>
-                            </div>
-                            <div className='statusandtime font-josefin flex items-center justify-between text-black'>
-                                <p className='mx-3 text-yellow-500'>Pending</p>
-                                <p className='mx-3'>12/2/2026</p>
-                            </div>
-                        </div>
-                    </div>
+            <div className='my-5'>
+                <h1 className='text-center font-bold font-mochiy text-3xl mb-4'>Borrowed Books</h1>
+                <div className='flex flex-wrap items-start justify-start'>
+                    {BorrowedBooksUser && BorrowedBooksUser.length > 0 ? (
+                        BorrowedBooksUser.map((borrowed) => {
+                            const toDate = new Date(borrowed.toDate);
+                            const today = new Date();
+                            const isOverdue = toDate < today && !borrowed.returned;
+                            const statusColor = borrowed.returned
+                                ? 'text-green-500'
+                                : isOverdue
+                                    ? 'text-red-500'
+                                    : 'text-yellow-500';
+                            const statusText = borrowed.returned
+                                ? 'Returned'
+                                : isOverdue
+                                    ? 'Overdue'
+                                    : 'Pending';
+
+                            return (
+                                <div key={borrowed._id} className='w-[20rem] h-[20rem] bg-white m-3 rounded-xl shadow-lg'>
+                                    <div className='w-full h-[60%]'>
+                                        <img
+                                            src={borrowed.book.picture}
+                                            className='w-full h-full object-cover rounded-t-xl'
+                                            alt={borrowed.book.name}
+                                        />
+                                    </div>
+                                    <div className='flex flex-col justify-between h-[40%] w-full py-3'>
+                                        <div className='name'>
+                                            <p className='font-josefin text-black mx-3 font-bold text-2xl'>{borrowed.book.name}</p>
+                                        </div>
+                                        <div className='statusandtime font-josefin flex items-center justify-between text-black'>
+                                            <p className={`mx-3 ${statusColor}`}>{statusText}</p>
+                                            <p className='mx-3'>{toDate.toLocaleDateString()}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <p className='text-center text-white font-josefin w-full'>No borrowed books found.</p>
+                    )}
                 </div>
             </div>
         </div>

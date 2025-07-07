@@ -11,6 +11,7 @@ export const useBookStore = create((set) => ({
     books: null,
     message: null,
     savedBooks: null,
+    BorrowedBooksUser: null,
     addBook: async (name, quantity, description, picture) => {
         set({ isLoading: true, error: null, success: false, message: null });
         try {
@@ -203,6 +204,26 @@ export const useBookStore = create((set) => ({
                 isLoading: false,
                 success: false,
                 message: null,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
+    borrowedBooksUser: async (userId) => {
+        set({ isLoading: false, success: false, message: null });
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BOOK_URL}/borrowed-books-user`,
+                {
+                    userId
+                }
+            );
+            set({ BorrowedBooksUser: response?.data?.BorrowedBooksOfUser, isLoading: false, success: true });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                success: false,
+                isLoading: false,
+                message: error?.response?.data?.message,
             });
             throw new Error(error?.response?.data?.message || error?.message);
         }
