@@ -9,6 +9,7 @@ const BorrowedBooksPage = () => {
     useEffect(() => {
         borrowedBooks();
     }, []);
+    const todayDate = new Date();
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toISOString().split('T')[0];
@@ -44,6 +45,7 @@ const BorrowedBooksPage = () => {
                 </div>
                 {BorrowedBooks && BorrowedBooks.length > 0 ? (
                     BorrowedBooks.map((item) => {
+                        const isOverDue = formatDate(todayDate) > formatDate(item?.toDate) ? true : false;
                         const statusText = item.returned ? 'Returned' : 'Pending';
                         const statusColor = item.returned ? 'text-green-500' : 'text-yellow-500';
                         return (
@@ -73,8 +75,8 @@ const BorrowedBooksPage = () => {
                                         <option>Not Returned</option>
                                     </select>
                                 </div>
-                                <h1 className={`font-josefin text-center font-bold ${statusColor} col-span-1`}>
-                                    {statusText}
+                                <h1 className={`font-josefin text-center font-bold ${isOverDue ? 'text-red-600' : statusColor} col-span-1`}>
+                                    {isOverDue ? 'Due pass' : statusText}
                                 </h1>
                                 <div className="flex items-center justify-center col-span-1">
                                     <button
