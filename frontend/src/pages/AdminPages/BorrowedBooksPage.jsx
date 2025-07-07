@@ -5,7 +5,6 @@ import { useBookStore } from '../../store/bookStore.js';
 import { toast } from 'react-hot-toast';
 import Loader from '../../tools/Loader.jsx';
 const BorrowedBooksPage = () => {
-    const today = new Date();
     const { borrowedBooks, BorrowedBooks, returnBook, isLoadingBook } = useBookStore();
     useEffect(() => {
         borrowedBooks();
@@ -25,7 +24,8 @@ const BorrowedBooksPage = () => {
                 <svg
                     className="h-[1em] opacity-50"
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24">
+                    viewBox="0 0 24 24"
+                >
                     <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.3-4.3"></path>
@@ -44,19 +44,8 @@ const BorrowedBooksPage = () => {
                 </div>
                 {BorrowedBooks && BorrowedBooks.length > 0 ? (
                     BorrowedBooks.map((item) => {
-                        const formattedToday = formatDate(today);
-                        const formattedDueDate = formatDate(item.toDate);
-                        const isOverdue = formattedToday > formattedDueDate && !item.returned;
-                        const statusText = item.returned
-                            ? 'Returned'
-                            : isOverdue
-                                ? 'Overdue'
-                                : 'On Time';
-                        const statusColor = item.returned
-                            ? 'text-green-500'
-                            : isOverdue
-                                ? 'text-red-500'
-                                : 'text-yellow-500';
+                        const statusText = item.returned ? 'Returned' : 'Pending';
+                        const statusColor = item.returned ? 'text-green-500' : 'text-yellow-500';
                         return (
                             <div key={item._id} className="grid grid-cols-6 gap-3 my-10 items-center">
                                 <div className="items-center justify-center col-span-1 hidden md:flex">
@@ -68,7 +57,7 @@ const BorrowedBooksPage = () => {
                                 </div>
                                 <div className="text-center font-josefin col-span-1">
                                     <p className="text-orange-500 font-semibold">{item.book?.name || 'N/A'}</p>
-                                    <p className="text-sm text-gray-400">Due: {formattedDueDate}</p>
+                                    <p className="text-sm text-gray-400">Due: {formatDate(item.toDate)}</p>
                                 </div>
                                 <h1 className="text-center font-josefin text-orange-500 col-span-1">
                                     {item.user?.username || 'N/A'}
