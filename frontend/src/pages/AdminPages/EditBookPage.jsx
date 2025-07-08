@@ -13,7 +13,7 @@ const EditBookPage = () => {
         const file = e.target.files[0];
         setPicture(file);
     };
-    const { book, findBook, isFoundBook, isLoadingBook, isLoading, message, editBook, error } = useBookStore();
+    const { book, findBook, isFoundBook, isLoadingBook, isLoading, editBook, error } = useBookStore();
     useEffect(() => {
         const fetchBook = async () => {
             await findBook(id);

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useBookStore } from '../../store/bookStore.js';
@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 import Loader from '../../tools/Loader.jsx';
 const BorrowedBooksPage = () => {
     const { borrowedBooks, BorrowedBooks, returnBook, isLoadingBook } = useBookStore();
+    const [searchQuery, setSearchQuery] = useState('');
     useEffect(() => {
         borrowedBooks();
     }, []);
@@ -19,9 +20,20 @@ const BorrowedBooksPage = () => {
         await returnBook(bookId, borrowedBookId);
         toast.success('Book returned successfully!!');
     };
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+    const filteredBorrowedBooks = (BorrowedBooks || []).filter((item) => {
+        const bookName = item.book?.name?.toLowerCase() || '';
+        const userName = item.user?.username?.toLowerCase() || '';
+        return (
+            bookName.includes(searchQuery.toLowerCase()) ||
+            userName.includes(searchQuery.toLowerCase())
+        );
+    });
     return (
         <div>
-            <label className="input my-5">
+            <label className="input my-5 flex items-center gap-2 border p-2 rounded-lg bg-white shadow-md w-full max-w-xl mx-auto">
                 <svg
                     className="h-[1em] opacity-50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +44,14 @@ const BorrowedBooksPage = () => {
                         <path d="m21 21-4.3-4.3"></path>
                     </g>
                 </svg>
-                <input type="search" required placeholder="Search" />
+                <input
+                    type="search"
+                    required
+                    placeholder="Search by book or user name"
+                    className="flex-1 outline-none bg-transparent text-black"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                />
             </label>
             <div className="my-5 max-w-7xl mx-auto bg-base-300 p-3 rounded-xl text-center">
                 <div className="grid grid-cols-6 gap-3 font-bold font-poppins items-center">
@@ -43,9 +62,9 @@ const BorrowedBooksPage = () => {
                     <h1 className="col-span-1 hidden md:block">Status</h1>
                     <h1 className="col-span-1">Action</h1>
                 </div>
-                {BorrowedBooks && BorrowedBooks.length > 0 ? (
-                    BorrowedBooks.map((item) => {
-                        const isOverDue = formatDate(todayDate) > formatDate(item?.toDate) ? true : false;
+                {filteredBorrowedBooks.length > 0 ? (
+                    filteredBorrowedBooks.map((item) => {
+                        const isOverDue = formatDate(todayDate) > formatDate(item?.toDate);
                         const statusText = item.returned ? 'Returned' : 'Pending';
                         const statusColor = item.returned ? 'text-green-500' : 'text-yellow-500';
                         return (
@@ -81,7 +100,8 @@ const BorrowedBooksPage = () => {
                                 <div className="flex items-center justify-center col-span-1">
                                     <button
                                         disabled={!item.returned || isLoadingBook}
-                                        className={`btn btn-primary text-white ${isLoadingBook ? 'opacity-50' : ''}`}>
+                                        className={`btn btn-primary text-white ${isLoadingBook ? 'opacity-50' : ''}`}
+                                    >
                                         {isLoadingBook ? <Loader /> : <FontAwesomeIcon icon={faTrash} />}
                                     </button>
                                 </div>

@@ -5,12 +5,16 @@ import { useBookStore } from '../../store/bookStore.js';
 import { toast } from 'react-hot-toast';
 import Loader from '../../tools/Loader.jsx';
 import { Link } from 'react-router';
+
 const EditBooksPage = () => {
     const { Books, books, deleteBook, success } = useBookStore();
     const [deletingBookId, setDeletingBookId] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+
     useEffect(() => {
         Books();
-    }, [books]);
+    }, []);
+
     const deleteBookOnClick = async (id) => {
         setDeletingBookId(id);
         try {
@@ -22,6 +26,15 @@ const EditBooksPage = () => {
             setDeletingBookId(null);
         }
     };
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const filteredBooks = (books || []).filter((book) =>
+        book.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <div className='min-h-screen p-4'>
             <label className="input mb-5 flex items-center gap-2 border p-2 rounded-lg bg-white shadow-md">
@@ -31,7 +44,14 @@ const EditBooksPage = () => {
                         <path d="m21 21-4.3-4.3"></path>
                     </g>
                 </svg>
-                <input type="search" required placeholder="Search" className="flex-1 outline-none" />
+                <input
+                    type="search"
+                    required
+                    placeholder="Search"
+                    className="flex-1 outline-none text-black"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                />
             </label>
             <div className='max-w-7xl mx-auto bg-base-300 p-5 rounded-xl text-center'>
                 <div className='grid grid-cols-3 font-bold font-poppins border-b pb-2'>
@@ -39,8 +59,8 @@ const EditBooksPage = () => {
                     <h1>Name</h1>
                     <h1>Action</h1>
                 </div>
-                {books?.length > 0 ? (
-                    books.map((book) => {
+                {filteredBooks.length > 0 ? (
+                    filteredBooks.map((book) => {
                         const isDeleting = deletingBookId === book._id;
                         return (
                             <div key={book._id} className='my-4 grid grid-cols-3 items-center gap-5 border-b py-2'>
@@ -67,7 +87,7 @@ const EditBooksPage = () => {
                         );
                     })
                 ) : (
-                    <div className='text-center mt-5 text-gray-500 font-josefin'>No books found.</div>
+                    <div className='text-center mt-5 text-gray-500 font-josefin'>No books found!!</div>
                 )}
             </div>
         </div>

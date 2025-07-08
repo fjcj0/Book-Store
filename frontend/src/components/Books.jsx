@@ -10,7 +10,7 @@ const Books = () => {
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
     };
-    const filteredBooks = books.filter((book) =>
+    const filteredBooks = (books || []).filter((book) =>
         book.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     return (
@@ -18,7 +18,6 @@ const Books = () => {
             <h1 className='font-bold text-center text-3xl font-mochiy'>
                 Our <span className='text-green-500'>Books</span>
             </h1>
-
             <div className='my-5 flex px-16 justify-start'>
                 <label className="input border border-green-600 rounded-xl flex items-center gap-2 px-2 py-1">
                     <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -38,12 +37,11 @@ const Books = () => {
                     <kbd className="kbd kbd-sm">K</kbd>
                 </label>
             </div>
-
             <div className='my-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 w-[95%] mx-auto gap-6'>
                 {filteredBooks.length > 0 ? (
                     filteredBooks.map((book, index) => (
                         <BookCard
-                            key={book.id || index}
+                            key={book._id || index}
                             name={book.name}
                             description={book.description}
                             img={book.picture}
