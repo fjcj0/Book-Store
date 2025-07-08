@@ -281,4 +281,30 @@ export const useBookStore = create((set) => ({
             throw new Error(error?.response?.data?.message || error?.message);
         }
     },
+    deleteBorrowedBook: async (bookId, borrowedBookId) => {
+        set({ isLoadingBook: true, error: null, success: false, message: null });
+        try {
+            const response = await axios.delete(
+                `${import.meta.env.VITE_API_BOOK_URL}/delete-borrowed-book`,
+                { params: { borrowedBookId, bookId } }
+            );
+            const refreshed = await axios.get(
+                `${import.meta.env.VITE_API_BOOK_URL}/borrowed-books`
+            );
+            set({
+                isLoadingBook: false,
+                success: true,
+                message: response?.data?.message,
+                BorrowedBooks: refreshed?.data?.borrowedBook,
+            });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                isLoadingBook: false,
+                success: false,
+                message: null,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
 }));

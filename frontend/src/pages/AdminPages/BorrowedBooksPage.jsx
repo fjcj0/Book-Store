@@ -5,7 +5,7 @@ import { useBookStore } from '../../store/bookStore.js';
 import { toast } from 'react-hot-toast';
 import Loader from '../../tools/Loader.jsx';
 const BorrowedBooksPage = () => {
-    const { borrowedBooks, BorrowedBooks, returnBook, isLoadingBook } = useBookStore();
+    const { borrowedBooks, BorrowedBooks, returnBook, isLoadingBook, deleteBorrowedBook } = useBookStore();
     const [searchQuery, setSearchQuery] = useState('');
     useEffect(() => {
         borrowedBooks();
@@ -31,6 +31,11 @@ const BorrowedBooksPage = () => {
             userName.includes(searchQuery.toLowerCase())
         );
     });
+    const SubmitDeleteBorrowedBook = async (e, bookId, borrowedBookId) => {
+        e.preventDefault();
+        await deleteBorrowedBook(bookId, borrowedBookId);
+        toast.success('Borrowed Book has been deleted successfully!!');
+    };
     return (
         <div>
             <label className="input my-5 flex items-center gap-2 border p-2 rounded-lg bg-white shadow-md w-full max-w-xl mx-auto">
@@ -99,6 +104,7 @@ const BorrowedBooksPage = () => {
                                 </h1>
                                 <div className="flex items-center justify-center col-span-1">
                                     <button
+                                        onClick={(e) => SubmitDeleteBorrowedBook(e, item?.book?._id, item?._id)}
                                         disabled={!item.returned || isLoadingBook}
                                         className={`btn btn-primary text-white ${isLoadingBook ? 'opacity-50' : ''}`}
                                     >
