@@ -4,6 +4,7 @@ import { getPublicIdFromUrl } from '../utils/getPublicFormUrl.js';
 import { SavedBook } from '../models/savedbook.model.js';
 import { BorrowedBook } from '../models/borrowedbook.model.js';
 import { Request } from '../models/request.model.js';
+import moment from 'moment';
 export const addBook = async (request, response) => {
     try {
         const { name, quantity, description } = request.body;
@@ -135,7 +136,6 @@ export const editBook = async (request, response) => {
         return response.status(500).json({ success: false, message: error.message });
     }
 };
-
 export const addBorrowedBookUser = async (request, response) => {
     const { userId, bookId, toDate } = request.body;
     try {
@@ -356,5 +356,47 @@ export const totalBorrowedBooks = async (request, response) => {
         return response.status(200).json({ totalBorrowedBooks: count });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });
+    }
+};
+export const getWeeklyBorrowedBookStats = async (req, res) => {
+    try {
+        const today = moment().startOf('day');
+        const lastWeek = moment().subtract(6, 'days').startOf('day');
+        const data = await BorrowedBook.aggregate([
+            {
+                $match: {
+                    borrowedAt: {
+                        $gte: lastWeek.toDate(),
+                        $lte: today.clone().endOf('day').toDate(),
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: { format: '%Y-%m-%d', date: '$borrowedAt' },
+                    },
+                    total: { $sum: 1 },
+                },
+            },
+            {
+                $sort: { _id: 1 },
+            }
+        ]);
+        const result = [];
+        for (let i = 0; i < 7; i++) {
+            const date = lastWeek.clone().add(i, 'days');
+            const dateStr = date.format('YYYY-MM-DD');
+            const dayName = date.format('dddd');
+            const found = data.find(d => d._id === dateStr);
+            result.push({
+                day: dayName,
+                total: found ? found.total : 0,
+            });
+        }
+        res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
