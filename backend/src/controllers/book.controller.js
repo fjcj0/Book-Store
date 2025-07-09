@@ -135,7 +135,6 @@ export const editBook = async (request, response) => {
         return response.status(500).json({ success: false, message: error.message });
     }
 };
-
 export const addBorrowedBookUser = async (request, response) => {
     const { userId, bookId, toDate } = request.body;
     try {
@@ -259,7 +258,6 @@ export const returnBook = async (request, response) => {
         return response.status(500).json({ success: true, message: error.message });
     }
 };
-
 export const addSavedBookUser = async (request, response) => {
     const { userId, bookId } = request.body;
     try {
@@ -322,6 +320,39 @@ export const deleteSavedBook = async (request, response) => {
         }
         await SavedBook.deleteOne({ _id: savedBookId });
         return response.status(201).json({ success: true, message: 'Saved Book of user has been deleted successfully!!' });
+    } catch (error) {
+        return response.status(500).json({ success: false, message: error.message });
+    }
+};
+export const totalBooks = async (request, response) => {
+    try {
+        const count = await Book.countDocuments();
+        return response.status(200).json({ totalBooks: count });
+    } catch (error) {
+        return response.status(500).json({ success: false, message: error.message });
+    }
+};
+export const totalQuantity = async (request, response) => {
+    try {
+        const result = await Book.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalQuantity: { $sum: "$quantity" }
+                }
+            }
+        ]);
+
+        const total = result[0]?.totalQuantity || 0;
+        return response.status(200).json({ totalQuantity: total });
+    } catch (error) {
+        return response.status(500).json({ success: false, message: error.message });
+    }
+};
+export const totalBorrowedBooks = async (request, response) => {
+    try {
+        const count = await BorrowedBook.countDocuments();
+        return response.status(200).json({ totalBorrowedBooks: count });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });
     }

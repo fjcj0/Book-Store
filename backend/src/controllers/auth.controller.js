@@ -213,3 +213,11 @@ export const editUser = async (request, response) => {
         return response.status(500).json({ success: false, message: error.message });
     }
 };
+export const totalUsers = async (request, response) => {
+    try {
+        const count = await User.countDocuments();
+        return response.status(200).json({ totalUsers: count });
+    } catch (error) {
+        return response.status(500).json({ success: false, message: error.message });
+    }
+};

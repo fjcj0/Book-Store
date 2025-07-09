@@ -1,5 +1,5 @@
 import express from 'express';
-import { login, logout, signup, verifyEmail, forgotPassword, resetPassword, checkAuth, editUser } from '../controllers/auth.controller.js';
+import { login, logout, signup, verifyEmail, forgotPassword, resetPassword, checkAuth, editUser, totalUsers } from '../controllers/auth.controller.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import upload from '../utils/multer.js';
 const router = express.Router();
@@ -11,4 +11,5 @@ router.post('/verify-email', verifyEmail);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
 router.post('/edit-user', verifyToken, upload.single('profilePicture'), editUser);
+router.get('/total-user', totalUsers);
 export default router;
