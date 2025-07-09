@@ -17,6 +17,8 @@ import { useAuthStore } from './store/authStore.js';
 import Loader from './tools/Loader.jsx';
 import UserDashboardPage from './pages/UserPages/UserDashboardPage.jsx';
 import BorrowedBooksPage from './pages/AdminPages/BorrowedBooksPage.jsx';
+import ForgotPasswordPage from './pages/UserPages/ForgotPasswordPage.jsx';
+import ResetPasswordPage from './pages/UserPages/ResetPasswordPage.jsx';
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated) {
@@ -82,6 +84,17 @@ const App = () => {
           <RedirectAuthenticatedUser>
             <CodePage />
           </RedirectAuthenticatedUser >} />
+        <Route path="/forgot-password" element={
+          <RedirectAuthenticatedUser>
+            <ForgotPasswordPage />
+          </RedirectAuthenticatedUser >} />
+        <Route
+          path='/reset-password/:token'
+          element={
+            <RedirectAuthenticatedUser>
+              <ResetPasswordPage />
+            </RedirectAuthenticatedUser>
+          } />
       </Routes>
       <Toaster />
     </>

@@ -3,6 +3,7 @@ import Input from '../../components/Input';
 import { FaUser, FaLock, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { useAuthStore } from '../../store/authStore.js';
 import Loader from '../../tools/Loader.jsx';
+import { Link } from 'react-router';
 const SignInPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -31,6 +32,9 @@ const SignInPage = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
+                <div className='flex flex-col my-4'>
+                    <Link to={'/forgot-password'} className='text-sm text-decoration-underline font-josefin'>forget password?</Link>
+                </div>
                 <div className='flex flex-col gap-2 my-3'>
                     <ValidationItem
                         valid={isPasswordValid}
