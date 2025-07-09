@@ -16,6 +16,7 @@ export const useBookStore = create((set) => ({
     totalQuantityBook: 0,
     totalBook: 0,
     totalBorrowedBook: 0,
+    borrowedBooksLastWeek: null,
     addBook: async (name, quantity, description, picture) => {
         set({ isLoading: true, error: null, success: false, message: null });
         try {
@@ -375,6 +376,28 @@ export const useBookStore = create((set) => ({
                 success: false,
                 message: null,
                 totalBorrowedBook: 0,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
+    getWeeklyBorrowedBookStats: async () => {
+        set({ isLoading: true, error: null, success: false, message: null });
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_BOOK_URL}/borrowed-book-last-week`
+            );
+            set({
+                isLoading: false,
+                success: true,
+                message: response?.data?.message,
+                borrowedBooksLastWeek: response?.data,
+            });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                isLoading: false,
+                success: false,
+                message: null,
             });
             throw new Error(error?.response?.data?.message || error?.message);
         }
