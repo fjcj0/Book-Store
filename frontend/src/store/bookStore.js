@@ -13,6 +13,9 @@ export const useBookStore = create((set) => ({
     savedBooks: null,
     BorrowedBooksUser: null,
     BorrowedBooks: null,
+    totalQuantityBook: 0,
+    totalBook: 0,
+    totalBorrowedBook: 0,
     addBook: async (name, quantity, description, picture) => {
         set({ isLoading: true, error: null, success: false, message: null });
         try {
@@ -303,6 +306,75 @@ export const useBookStore = create((set) => ({
                 isLoadingBook: false,
                 success: false,
                 message: null,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
+    totalBooks: async () => {
+        set({ isLoading: true, error: null, success: false, message: null });
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_BOOK_URL}/total-book`
+            );
+            set({
+                isLoading: false,
+                success: true,
+                message: response?.data?.message,
+                totalBook: response?.data?.totalBooks,
+            });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                isLoading: false,
+                success: false,
+                message: null,
+                totalBook: 0,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
+    totalQuantity: async () => {
+        set({ isLoading: true, error: null, success: false, message: null });
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_BOOK_URL}/total-quantity`
+            );
+            set({
+                isLoading: false,
+                success: true,
+                message: response?.data?.message,
+                totalQuantityBook: response?.data?.totalQuantity,
+            });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                isLoading: false,
+                success: false,
+                message: null,
+                totalQuantityBook: 0,
+            });
+            throw new Error(error?.response?.data?.message || error?.message);
+        }
+    },
+    totalBorrowedBooks: async () => {
+        set({ isLoading: true, error: null, success: false, message: null });
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_BOOK_URL}/total-borrowed-book`
+            );
+            set({
+                isLoading: false,
+                success: true,
+                message: response?.data?.message,
+                totalBorrowedBook: response?.data?.totalBorrowedBooks,
+            });
+        } catch (error) {
+            set({
+                error: error?.response?.data?.message || error?.message,
+                isLoading: false,
+                success: false,
+                message: null,
+                totalBorrowedBook: 0,
             });
             throw new Error(error?.response?.data?.message || error?.message);
         }

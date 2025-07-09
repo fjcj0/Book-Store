@@ -18,5 +18,5 @@ router.get('/borrowed-books', borrowedBooks);
 router.post('/return-borrowed-book', returnBook);
 router.get('/total-book', totalBooks);
 router.get('/total-borrowed-book', totalBorrowedBooks);
-router.get('total-quantity', totalQuantity);
+router.get('/total-quantity', totalQuantity);
 export default router;

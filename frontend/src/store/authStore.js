@@ -7,6 +7,7 @@ export const useAuthStore = create((set) => ({
     error: null,
     isLoading: false,
     isCheckingAuth: true,
+    totalUserIn: 0,
     signup: async (username, email, name, password) => {
         set({ isLoading: true, error: null });
         try {
@@ -98,6 +99,14 @@ export const useAuthStore = create((set) => ({
                 error: error.response?.data?.message || error.message,
                 isLoading: false,
             });
+            throw new Error(error.response?.data?.message || error.message);
+        }
+    },
+    totalUsers: async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_USER_URL}/total-user`);
+            set({ totalUserIn: response?.data?.totalUsers });
+        } catch (error) {
             throw new Error(error.response?.data?.message || error.message);
         }
     },
