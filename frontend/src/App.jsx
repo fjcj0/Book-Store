@@ -13,7 +13,7 @@ import EditBooksPage from './pages/AdminPages/EditBooksPage';
 import EditBookPage from './pages/AdminPages/EditBookPage';
 import RequestsPage from './pages/AdminPages/RequestsPage';
 import { Toaster } from 'react-hot-toast';
-import { useAuthStore } from './store/AuthStore.js';
+import { useAuthStore } from './store/authStore.js';
 import Loader from './tools/Loader.jsx';
 import UserDashboardPage from './pages/UserPages/UserDashboardPage.jsx';
 import BorrowedBooksPage from './pages/AdminPages/BorrowedBooksPage.jsx';
