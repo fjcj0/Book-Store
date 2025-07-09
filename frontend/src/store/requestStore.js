@@ -9,6 +9,7 @@ export const useRequestStore = create((set, get) => ({
     request: null,
     requests: null,
     messageRequest: null,
+    requestsLastWeek: null,
     Requests: async () => {
         set({ isLoadingRequest: true, errorRequest: null, messageRequest: null, successRequest: false });
         try {
@@ -108,6 +109,27 @@ export const useRequestStore = create((set, get) => ({
                 isLoading: false,
                 successRequest: false,
                 messageRequest: null,
+            });
+            throw new Error(error.response?.data?.message || error.message);
+        }
+    },
+    getWeeklyRequestStats: async () => {
+        set({ isLoadingRequest: true, errorRequest: null, messageRequest: null, successRequest: false });
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_REQUEST_URL}/request-last-week`);
+            set({
+                requestsLastWeek: response?.data?.result,
+                isLoadingRequest: false,
+                errorRequest: null,
+                successRequest: true,
+                messageRequest: response?.data?.message,
+            });
+        } catch (error) {
+            set({
+                errorRequest: error.response?.data?.message || error.message,
+                isLoadingRequest: false,
+                successRequest: false,
             });
             throw new Error(error.response?.data?.message || error.message);
         }

@@ -6,7 +6,6 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from 'recharts';
-
 const data = [
     { day: 'Monday', total: 120 },
     { day: 'Tuesday', total: 98 },
@@ -16,7 +15,6 @@ const data = [
     { day: 'Saturday', total: 80 },
     { day: 'Sunday', total: 60 },
 ];
-
 const BarChartRequest = () => {
     return (
         <div style={{ width: '100%', height: 300 }}>

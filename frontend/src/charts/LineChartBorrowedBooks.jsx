@@ -6,7 +6,6 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from 'recharts';
-
 const data = [
     { day: 'Monday', booksBorrowed: 120 },
     { day: 'Tuesday', booksBorrowed: 98 },
@@ -29,5 +28,4 @@ const LineChartBorrowedBooks = () => {
         </div>
     );
 };
-
 export default LineChartBorrowedBooks;

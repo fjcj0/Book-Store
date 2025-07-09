@@ -1,6 +1,7 @@
 import { Request } from '../models/request.model.js';
 import { BorrowedBook } from '../models/borrowedbook.model.js';
 import { Book } from '../models/book.model.js';
+import moment from 'moment';
 export const requests = async (request, response) => {
     try {
         const requestsList = await Request.find({})
@@ -114,5 +115,47 @@ export const approveRequest = async (request, response) => {
         return response.status(400).json({ success: false, message: 'request not found!!' });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });
+    }
+};
+export const getWeeklyRequestStats = async (req, res) => {
+    try {
+        const today = moment().startOf('day');
+        const lastWeek = moment().subtract(6, 'days').startOf('day');
+        const data = await Request.aggregate([
+            {
+                $match: {
+                    requestedAt: {
+                        $gte: lastWeek.toDate(),
+                        $lte: today.clone().endOf('day').toDate(),
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: { format: '%Y-%m-%d', date: '$requestedAt' },
+                    },
+                    total: { $sum: 1 },
+                },
+            },
+            {
+                $sort: { _id: 1 },
+            }
+        ]);
+        const result = [];
+        for (let i = 0; i < 7; i++) {
+            const date = lastWeek.clone().add(i, 'days');
+            const dateStr = date.format('YYYY-MM-DD');
+            const dayName = date.format('dddd');
+            const found = data.find(d => d._id === dateStr);
+            result.push({
+                day: dayName,
+                total: found ? found.total : 0,
+            });
+        }
+        res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
