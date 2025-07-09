@@ -119,7 +119,7 @@ export const useRequestStore = create((set, get) => ({
             const response = await axios.get(
                 `${import.meta.env.VITE_API_REQUEST_URL}/request-last-week`);
             set({
-                requestsLastWeek: response?.data?.result,
+                requestsLastWeek: response?.data,
                 isLoadingRequest: false,
                 errorRequest: null,
                 successRequest: true,
