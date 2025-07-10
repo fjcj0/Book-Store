@@ -10,12 +10,7 @@ import cors from 'cors';
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
-app.use(cors({
-    origin: (origin, callback) => {
-        callback(null, origin);
-    },
-    credentials: true
-}));
+app.use(cors({ origin: 'https://library-k0mh.onrender.com', credentials: true }));
 const MongoUrl = process.env.MONGOURL;
 app.use(express.json());
 app.use(cookieParser());
