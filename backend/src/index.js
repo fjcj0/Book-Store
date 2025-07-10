@@ -2,14 +2,11 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose, { mongo } from 'mongoose';
 import authRoutes from './routes/auth.route.js';
-/*
 import bookRoutes from './routes/book.routes.js';
 import requestRoutes from './routes/request.route.js';
-*/
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import path from 'path';
-
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
@@ -20,11 +17,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
-/*
 app.use('/api/book', bookRoutes);
 app.use('/api/request', requestRoutes);
-*/
-
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../frontend/dist")));
