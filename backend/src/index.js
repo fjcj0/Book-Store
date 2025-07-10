@@ -6,6 +6,7 @@ import bookRoutes from './routes/book.routes.js';
 import requestRoutes from './routes/request.route.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
