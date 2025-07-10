@@ -69,7 +69,7 @@ const BorrowedBooksPage = () => {
                 </div>
                 {filteredBorrowedBooks.length > 0 ? (
                     filteredBorrowedBooks.map((item) => {
-                        const isOverDue = formatDate(todayDate) > formatDate(item?.toDate);
+                        const isOverDue = todayDate > new Date(item?.toDate);
                         const statusText = item.returned ? 'Returned' : 'Pending';
                         const statusColor = item.returned ? 'text-green-500' : 'text-yellow-500';
                         return (
