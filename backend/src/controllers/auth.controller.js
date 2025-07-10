@@ -5,6 +5,8 @@ import { getPublicIdFromUrl } from '../utils/getPublicFormUrl.js';
 import crypto from 'crypto';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie.js';
 import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } from '../mail/emails.js';
+import { Admin } from '../models/admin.model.js';
+import { generateTokenAndSetCookieAdmin } from '../utils/generateTokenAndSetCookieAdmin.js';
 export const checkAuth = async (request, response) => {
     try {
         const user = await User.findById(request.userId).select('-password');
@@ -89,12 +91,10 @@ export const login = async (request, response) => {
         if (!user) {
             return response.status(404).json({ success: false, message: 'Invalid credentials!!' });
         }
-
         const isPasswordValid = await bcryptjs.compare(password, user.password);
         if (!isPasswordValid) {
             return response.status(404).json({ success: false, message: 'Invalid credentials!!' });
         }
-
         generateTokenAndSetCookie(response, user._id);
         user.lastLogin = Date.now();
         await user.save();
@@ -219,5 +219,73 @@ export const totalUsers = async (request, response) => {
         return response.status(200).json({ totalUsers: count });
     } catch (error) {
         return response.status(500).json({ success: false, message: error.message });
+    }
+};
+export const signupAdmin = async (request, response) => {
+    const { username, password } = request.body;
+    try {
+        if (!username || !password) {
+            return response.status(404).json({ success: false, message: "some fields are required!!" });
+        }
+        const adminAlreadyExist = await Admin.findOne({ username });
+        if (adminAlreadyExist) {
+            return response.status(400).json({ success: false, message: "username or email already exist!!" });
+        }
+        const hashedPassword = await bcryptjs.hash(password, 10);
+        const admin = new Admin({
+            username,
+            password: hashedPassword,
+        });
+        await admin.save();
+        generateTokenAndSetCookieAdmin(response, admin._id);
+        return response.status(201).json({
+            success: true,
+            message: "user has been created successfully!!",
+            admin: {
+                ...admin._doc,
+                password: undefined,
+            }
+        })
+    } catch (error) {
+        return response.status(404).json({ success: false, message: error.message })
+    }
+};
+export const loginAdmin = async (request, response) => {
+    const { username, password } = request.body;
+    try {
+        if (!username || !password) {
+            return response.status(404).json({ success: false, message: "Username or password is empty!!" });
+        }
+        const admin = await Admin.findOne({ username });
+        if (!admin) {
+            return response.status(404).json({ success: false, message: 'Invalid credentials!!' });
+        }
+        const isPasswordValid = await bcryptjs.compare(password, admin.password);
+        if (!isPasswordValid) {
+            return response.status(404).json({ success: false, message: 'Invalid credentials!!' });
+        }
+        generateTokenAndSetCookieAdmin(response, admin._id);
+        await admin.save();
+        return response.status(200).json({
+            success: true,
+            message: 'Login successfully!!',
+            admin: {
+                ...admin._doc,
+                password: undefined,
+            }
+        });
+    } catch (error) {
+        return response.status(400).json({ success: false, message: error.message });
+    }
+};
+export const checkAuthAdmin = async (request, response) => {
+    try {
+        const admin = await Admin.findById(request.adminId).select('-password');
+        if (!admin) {
+            return response.status(404).json({ success: false, message: 'error no user is authenticated!!' });
+        }
+        return response.status(200).json({ success: true, admin });
+    } catch (error) {
+        return response.status(400).json({ success: false, message: error.message });
     }
 };
