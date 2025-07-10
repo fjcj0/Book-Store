@@ -6,6 +6,6 @@ const router = express.Router();
 router.get('/requests', requests);
 router.post('/add-request', verifyToken, addRequest);
 router.post('/approve-request', verifyTokenAdmin, approveRequest);
-router.delete('/reject-request', verifyTokenAdmin, rejectRequest);
+router.delete('/reject-request/:requestId', verifyTokenAdmin, rejectRequest);
 router.get('/request-last-week', getWeeklyRequestStats);
 export default router;
