@@ -27,15 +27,9 @@ app.use('/api/request', requestRoutes);
 
 
 if (process.env.NODE_ENV === "production") {
-    const distPath = path.join(__dirname, "../frontend/dist");
-    app.use(express.static(distPath));
+    app.use(express.static(path.join(__dirname, "../frontend/dist")));
     app.get("*", (req, res) => {
-        const indexFile = path.join(distPath, "index.html");
-        if (fs.existsSync(indexFile)) {
-            res.sendFile(indexFile);
-        } else {
-            res.status(500).send("index.html not found!!");
-        }
+        res.sendFile(path.resolve(__dirname, "../frontend", "dist", "index.html"));
     });
 }
 
