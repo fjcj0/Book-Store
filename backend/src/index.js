@@ -1,24 +1,21 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import authRoutes from './routes/auth.route.js';
 import bookRoutes from './routes/book.routes.js';
 import requestRoutes from './routes/request.route.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
-app.use(cors({ origin: 'https://library-k0mh.onrender.com', credentials: true }));
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 const MongoUrl = process.env.MONGOURL;
 app.use(express.json());
 app.use(cookieParser());
-
 app.use('/api/auth', authRoutes);
 app.use('/api/book', bookRoutes);
 app.use('/api/request', requestRoutes);
-
 mongoose.connect(MongoUrl).then(() => {
     console.log('Database is connected successfully!!');
     app.listen(port, () => {
