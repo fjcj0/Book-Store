@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
-import { useAuthStore } from '../../store/AuthStore.js';
+import { useAuthStore } from '../../store/authStore.js';
 import Loader from '../../tools/Loader.jsx';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
