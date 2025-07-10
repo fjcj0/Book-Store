@@ -1,10 +1,11 @@
 import express from 'express';
 import { addRequest, approveRequest, getWeeklyRequestStats, rejectRequest, requests } from '../controllers/request.controller.js';
 import { verifyToken } from '../middleware/verifyToken.js';
+import { verifyTokenAdmin } from '../middleware/verifyTokenAdmin.js';
 const router = express.Router();
 router.get('/requests', requests);
 router.post('/add-request', verifyToken, addRequest);
-router.post('/approve-request', approveRequest);
-router.delete('/reject-request', rejectRequest);
+router.post('/approve-request', verifyTokenAdmin, approveRequest);
+router.delete('/reject-request', verifyTokenAdmin, rejectRequest);
 router.get('/request-last-week', getWeeklyRequestStats);
 export default router;
