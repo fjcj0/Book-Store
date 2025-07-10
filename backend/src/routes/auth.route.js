@@ -10,7 +10,9 @@ router.post('/login', login);
 router.post('/logout', logout);
 router.post('/verify-email', verifyEmail);
 router.post('/forgot-password', forgotPassword);
+/*
 router.post('/reset-password/:token', resetPassword);
+*/
 router.post('/edit-user', verifyToken, upload.single('profilePicture'), editUser);
 router.get('/total-user', totalUsers);
 router.get('/check-auth-admin', verifyTokenAdmin, checkAuthAdmin);
