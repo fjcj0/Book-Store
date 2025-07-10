@@ -6,6 +6,8 @@ import bookRoutes from './routes/book.routes.js';
 import requestRoutes from './routes/request.route.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import path from "path";
+const __dirname = path.resolve();
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
@@ -16,6 +18,12 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/book', bookRoutes);
 app.use('/api/request', requestRoutes);
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "../frontend/dist")));
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "../frontend", "dist", "index.html"));
+    });
+}
 mongoose.connect(MongoUrl).then(() => {
     console.log('Database is connected successfully!!');
     app.listen(port, () => {
