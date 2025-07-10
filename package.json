@@ -4,9 +4,9 @@
   "type": "module",
   "main": "backend/src/index.js",
   "scripts": {
-  	"dev": "NODE_ENV=development nodemon backend/src/index.js",
-		"start": "NODE_ENV=production node backend/src/index.js",
-		"build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+    "dev": "NODE_ENV=development nodemon backend/src/index.js",
+    "start": "NODE_ENV=production node backend/src/index.js",
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +18,7 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
-    "express": "^5.1.0",
+    "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "mailtrap": "^4.1.0",
     "moment": "^2.30.1",
@@ -26,6 +26,7 @@
     "multer": "^2.0.1",
     "nodemailer": "^6.9.4",
     "nodemon": "^3.1.10",
+    "path-to-regexp": "^6.2.1",
     "zustand": "^5.0.4"
   }
 }

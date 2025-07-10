@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
-const VITE_API_USER_URL = import.meta.env.MODE === "development" ? "http://localhost:5000/api/auth" : "/api/auth";
+const VITE_API_USER_URL = import.meta.env.MODE === "development" ? "http://localhost:4000/api/auth" : "/api/auth";
 export const useAuthStore = create((set) => ({
     user: null,
     isAuthenticated: false,
