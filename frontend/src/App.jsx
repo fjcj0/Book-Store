@@ -19,6 +19,7 @@ import UserDashboardPage from './pages/UserPages/UserDashboardPage.jsx';
 import BorrowedBooksPage from './pages/AdminPages/BorrowedBooksPage.jsx';
 import ForgotPasswordPage from './pages/UserPages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/UserPages/ResetPasswordPage.jsx';
+import SignInPageAdmin from './pages/AdminPages/SignInPageAdmin.jsx';
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated) {
@@ -29,6 +30,13 @@ const ProtectedRoute = ({ children }) => {
   }
   return children;
 };
+const ProtectedRouteAdmin = ({ children }) => {
+  const { isAuthenticatedAdmin } = useAuthStore();
+  if (!isAuthenticatedAdmin) {
+    return <Navigate to="/signin-admin" replace />;
+  }
+  return children;
+};
 const RedirectAuthenticatedUser = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
   if (isAuthenticated && user?.isVerified) {
@@ -36,11 +44,19 @@ const RedirectAuthenticatedUser = ({ children }) => {
   }
   return children;
 };
+const RedirectAuthenticatedAdmin = ({ children }) => {
+  const { isAuthenticatedAdmin } = useAuthStore();
+  if (isAuthenticatedAdmin) {
+    return <Navigate to="/admin" replace />;
+  }
+  return children;
+};
 const App = () => {
-  const { checkAuth, isCheckingAuth } = useAuthStore();
+  const { checkAuth, isCheckingAuth, checkAuthAdmin } = useAuthStore();
   useEffect(() => {
+    checkAuthAdmin();
     checkAuth();
-  }, [checkAuth]);
+  }, [checkAuth, checkAuthAdmin]);
   if (isCheckingAuth) return <div className='w-screen h-screen flex items-center justify-center'><Loader /></div>
   return (
     <>
@@ -63,12 +79,25 @@ const App = () => {
             </ProtectedRoute>} />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<DashboardPage />} />
-          <Route path="/admin/addbook" element={<AddBookPage />} />
-          <Route path="/admin/editbooks" element={<EditBooksPage />} />
-          <Route path="/admin/editbook/:id" element={<EditBookPage />} />
-          <Route path="/admin/requests" element={<RequestsPage />} />
-          <Route path="/admin/borrowedbooks" element={<BorrowedBooksPage />} />
+          <Route index element={
+            <ProtectedRouteAdmin>
+              <DashboardPage />
+            </ProtectedRouteAdmin>} />
+          <Route path="/admin/addbook" element={<ProtectedRouteAdmin>
+            <AddBookPage />
+          </ProtectedRouteAdmin>} />
+          <Route path="/admin/editbooks" element={<ProtectedRouteAdmin>
+            <EditBooksPage />
+          </ProtectedRouteAdmin>} />
+          <Route path="/admin/editbook/:id" element={<ProtectedRouteAdmin>
+            <EditBookPage />
+          </ProtectedRouteAdmin>} />
+          <Route path="/admin/requests" element={<ProtectedRouteAdmin>
+            <RequestsPage />
+          </ProtectedRouteAdmin>} />
+          <Route path="/admin/borrowedbooks" element={<ProtectedRouteAdmin>
+            <BorrowedBooksPage />
+          </ProtectedRouteAdmin>} />
         </Route>
         <Route path="/signin" element={
           <RedirectAuthenticatedUser>
@@ -95,6 +124,9 @@ const App = () => {
               <ResetPasswordPage />
             </RedirectAuthenticatedUser>
           } />
+        <Route path='/signin-admin' element={<RedirectAuthenticatedAdmin>
+          <SignInPageAdmin />
+        </RedirectAuthenticatedAdmin>} />
       </Routes>
       <Toaster />
     </>

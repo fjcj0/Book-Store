@@ -289,3 +289,7 @@ export const checkAuthAdmin = async (request, response) => {
         return response.status(400).json({ success: false, message: error.message });
     }
 };
+export const logoutAdmin = async (request, response) => {
+    response.clearCookie('tokenAdmin');
+    response.status(200).json({ success: true, message: "you have been logged out successfully!!" });
+};

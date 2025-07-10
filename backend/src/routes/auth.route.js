@@ -1,5 +1,5 @@
 import express from 'express';
-import { login, logout, signup, verifyEmail, forgotPassword, resetPassword, checkAuth, editUser, totalUsers, checkAuthAdmin, signupAdmin, loginAdmin } from '../controllers/auth.controller.js';
+import { login, logout, signup, verifyEmail, forgotPassword, resetPassword, checkAuth, editUser, totalUsers, checkAuthAdmin, signupAdmin, loginAdmin, logoutAdmin } from '../controllers/auth.controller.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import upload from '../utils/multer.js';
 import { verifyTokenAdmin } from '../middleware/verifyTokenAdmin.js';
@@ -16,4 +16,5 @@ router.get('/total-user', totalUsers);
 router.get('/check-auth-admin', verifyTokenAdmin, checkAuthAdmin);
 router.post('/signup-admin', signupAdmin);
 router.post('/login-admin', loginAdmin);
+router.post('/logout-admin', logoutAdmin);
 export default router;

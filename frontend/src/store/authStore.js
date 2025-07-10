@@ -8,6 +8,9 @@ export const useAuthStore = create((set) => ({
     isLoading: false,
     isCheckingAuth: true,
     totalUserIn: 0,
+    admin: null,
+    isCheckingAuthAdmin: false,
+    isAuthenticatedAdmin: false,
     signup: async (username, email, name, password) => {
         set({ isLoading: true, error: null });
         try {
@@ -134,6 +137,42 @@ export const useAuthStore = create((set) => ({
                 error: error.response.data.message || "Error resetting password",
             });
             throw error;
+        }
+    },
+    signinAdmin: async (username, password) => {
+        set({ isLoading: true, error: null });
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_USER_URL}/login-admin`, {
+                username, password
+            });
+            set({ admin: response.data.admin, isAuthenticatedAdmin: true, isLoading: false });
+        } catch (error) {
+            set({ error: error.response.data.message || error.message, isLoading: false });
+            throw new Error(error.response?.data?.message || error.message);
+        }
+    },
+    checkAuthAdmin: async () => {
+        set({ isCheckingAuthAdmin: true, error: null });
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_USER_URL}/check-auth-admin`);
+            set({ admin: response.data.admin, isAuthenticatedAdmin: true, isCheckingAuthAdmin: false });
+        } catch (error) {
+            set({
+                error: null,
+                isAuthenticatedAdmin: false,
+                isCheckingAuthAdmin: false
+            });
+            throw new Error(error.response?.data?.message || error.message);
+        }
+    },
+    logoutAdmin: async () => {
+        set({ isLoading: true, error: null });
+        try {
+            await axios.post(`${import.meta.env.VITE_API_USER_URL}/logout-admin`);
+            set({ admin: null, isAuthenticatedAdmin: false, isLoading: false });
+        } catch (error) {
+            set({ error: error.response.data.message || error.message, isLoading: false });
+            throw new Error(error.response?.data?.message || error.message);
         }
     },
 }));

@@ -1,6 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router';
+import { useAuthStore } from '../store/authStore.js';
 const Sidebar = () => {
+    const { logoutAdmin, isLoading } = useAuthStore();
+    const logout = async (e) => {
+        e.preventDefault();
+        await logoutAdmin();
+    };
     const links = [
         '/admin',
         '/admin/addbook',
@@ -66,7 +72,10 @@ const Sidebar = () => {
                     ))}
                 </ul>
                 <div className="mt-auto h-16 flex items-center w-full">
-                    <button className="h-16 mx-auto flex justify-center items-center w-full bg-blue-500 hover:bg-blue-800 duration-300">
+                    <button
+                        onClick={logout}
+                        disabled={isLoading}
+                        className={`h-16 mx-auto flex justify-center items-center w-full bg-blue-500 hover:bg-blue-800 duration-300 ${isLoading ? 'opacity-50' : ''}`}>
                         <svg
                             className="h-5 w-5 text-white font-bold"
                             xmlns="http://www.w3.org/2000/svg"
