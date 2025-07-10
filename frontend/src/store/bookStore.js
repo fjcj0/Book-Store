@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
+const VITE_API_BOOK_URL = "http://localhost:4000/api/book";
 export const useBookStore = create((set) => ({
     error: null,
     isLoading: false,
@@ -26,7 +27,7 @@ export const useBookStore = create((set) => ({
             formData.append('description', description);
             formData.append('picture', picture);
             const response = await axios.post(
-                `${import.meta.env.VITE_API_BOOK_URL}/add-book`,
+                `${VITE_API_BOOK_URL}/add-book`,
                 formData,
                 {
                     headers: {
@@ -53,7 +54,7 @@ export const useBookStore = create((set) => ({
         set({ isLoading: true, error: null, success: false, message: null });
         try {
             const response = await axios.get(
-                `${import.meta.env.VITE_API_BOOK_URL}/books`
+                `${VITE_API_BOOK_URL}/books`
             );
             set({
                 isLoading: false,
@@ -76,7 +77,7 @@ export const useBookStore = create((set) => ({
         set({ isLoading: true, error: null, success: false, message: null });
         try {
             const response = await axios.delete(
-                `${import.meta.env.VITE_API_BOOK_URL}/delete-book`,
+                `${VITE_API_BOOK_URL}/delete-book`,
                 { params: { bookId } }
             );
             set({
@@ -98,7 +99,7 @@ export const useBookStore = create((set) => ({
         set({ error: null, success: false, isFoundBook: false, book: null, isLoadingBook: true });
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_BOOK_URL}/find-book`
+                `${VITE_API_BOOK_URL}/find-book`
                 , {
                     bookId
                 });
@@ -130,7 +131,7 @@ export const useBookStore = create((set) => ({
             if (newDescription) formData.append('newDescription', newDescription);
             if (newPicture) formData.append('newPicture', newPicture);
             const response = await axios.post(
-                `${import.meta.env.VITE_API_BOOK_URL}/edit-book`,
+                `${VITE_API_BOOK_URL}/edit-book`,
                 formData,
                 {
                     headers: { 'Content-Type': 'multipart/form-data' },
@@ -155,7 +156,7 @@ export const useBookStore = create((set) => ({
         set({ isLoading: false, error: null, success: false, message: null });
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_BOOK_URL}/add-saved-book-user`,
+                `${VITE_API_BOOK_URL}/add-saved-book-user`,
                 {
                     userId, bookId
                 }
@@ -175,7 +176,7 @@ export const useBookStore = create((set) => ({
         set({ isLoading: false, success: false, message: null });
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_BOOK_URL}/saved-books-user`,
+                `${VITE_API_BOOK_URL}/saved-books-user`,
                 {
                     userId
                 }
@@ -195,7 +196,7 @@ export const useBookStore = create((set) => ({
         set({ isLoading: true, error: null, success: false, message: null });
         try {
             const response = await axios.delete(
-                `${import.meta.env.VITE_API_BOOK_URL}/delete-saved-book-user`,
+                `${VITE_API_BOOK_URL}/delete-saved-book-user`,
                 { params: { savedBookId } }
             );
             set({
@@ -217,7 +218,7 @@ export const useBookStore = create((set) => ({
         set({ isLoading: false, success: false, message: null });
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_BOOK_URL}/borrowed-books-user`,
+                `${VITE_API_BOOK_URL}/borrowed-books-user`,
                 {
                     userId
                 }
@@ -237,7 +238,7 @@ export const useBookStore = create((set) => ({
         set({ isLoading: true, error: null, success: false, message: null });
         try {
             const response = await axios.get(
-                `${import.meta.env.VITE_API_BOOK_URL}/borrowed-books`
+                `${VITE_API_BOOK_URL}/borrowed-books`
             );
             set({
                 isLoading: false,
@@ -260,13 +261,13 @@ export const useBookStore = create((set) => ({
         set({ isLoadingBook: false, error: null, success: false, message: null });
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_BOOK_URL}/return-borrowed-book`,
+                `${VITE_API_BOOK_URL}/return-borrowed-book`,
                 {
                     borrowedBookId, bookId
                 }
             );
             const refreshed = await axios.get(
-                `${import.meta.env.VITE_API_BOOK_URL}/borrowed-books`
+                `${VITE_API_BOOK_URL}/borrowed-books`
             );
             set({
                 message: response?.data?.message,
@@ -289,11 +290,11 @@ export const useBookStore = create((set) => ({
         set({ isLoadingBook: true, error: null, success: false, message: null });
         try {
             const response = await axios.delete(
-                `${import.meta.env.VITE_API_BOOK_URL}/delete-borrowed-book`,
+                `${VITE_API_BOOK_URL}/delete-borrowed-book`,
                 { params: { borrowedBookId, bookId } }
             );
             const refreshed = await axios.get(
-                `${import.meta.env.VITE_API_BOOK_URL}/borrowed-books`
+                `${VITE_API_BOOK_URL}/borrowed-books`
             );
             set({
                 isLoadingBook: false,
@@ -315,7 +316,7 @@ export const useBookStore = create((set) => ({
         set({ isLoading: true, error: null, success: false, message: null });
         try {
             const response = await axios.get(
-                `${import.meta.env.VITE_API_BOOK_URL}/total-book`
+                `${VITE_API_BOOK_URL}/total-book`
             );
             set({
                 isLoading: false,
@@ -338,7 +339,7 @@ export const useBookStore = create((set) => ({
         set({ isLoading: true, error: null, success: false, message: null });
         try {
             const response = await axios.get(
-                `${import.meta.env.VITE_API_BOOK_URL}/total-quantity`
+                `${VITE_API_BOOK_URL}/total-quantity`
             );
             set({
                 isLoading: false,
@@ -361,7 +362,7 @@ export const useBookStore = create((set) => ({
         set({ isLoading: true, error: null, success: false, message: null });
         try {
             const response = await axios.get(
-                `${import.meta.env.VITE_API_BOOK_URL}/total-borrowed-book`
+                `${VITE_API_BOOK_URL}/total-borrowed-book`
             );
             set({
                 isLoading: false,
@@ -384,7 +385,7 @@ export const useBookStore = create((set) => ({
         set({ isLoading: true, error: null, success: false, message: null });
         try {
             const response = await axios.get(
-                `${import.meta.env.VITE_API_BOOK_URL}/borrowed-book-last-week`
+                `${VITE_API_BOOK_URL}/borrowed-book-last-week`
             );
             set({
                 isLoading: false,

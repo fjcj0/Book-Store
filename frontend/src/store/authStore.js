@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
+const VITE_API_USER_URL = "http://localhost:4000/api/auth";
 export const useAuthStore = create((set) => ({
     user: null,
     isAuthenticated: false,
@@ -14,7 +15,7 @@ export const useAuthStore = create((set) => ({
     signup: async (username, email, name, password) => {
         set({ isLoading: true, error: null });
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_USER_URL}/signup`, {
+            const response = await axios.post(`${VITE_API_USER_URL}/signup`, {
                 username, email, name, password
             });
             set({ user: response.data.user, isAuthenticated: true, isLoading: false });
@@ -26,7 +27,7 @@ export const useAuthStore = create((set) => ({
     verifyEmail: async (code) => {
         set({ isLoading: true, error: null });
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_USER_URL}/verify-email`, { code });
+            const response = await axios.post(`${VITE_API_USER_URL}/verify-email`, { code });
             set({ user: response.data.user, isAuthenticated: true, isLoading: false });
             return response.data;
         } catch (error) {
@@ -40,7 +41,7 @@ export const useAuthStore = create((set) => ({
     checkAuth: async () => {
         set({ isCheckingAuth: true, error: null });
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_USER_URL}/check-auth`);
+            const response = await axios.get(`${VITE_API_USER_URL}/check-auth`);
             set({ user: response.data.user, isAuthenticated: true, isCheckingAuth: false });
         } catch (error) {
             set({
@@ -54,7 +55,7 @@ export const useAuthStore = create((set) => ({
     signin: async (username, password) => {
         set({ isLoading: true, error: null });
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_USER_URL}/login`, {
+            const response = await axios.post(`${VITE_API_USER_URL}/login`, {
                 username, password
             });
             set({ user: response.data.user, isAuthenticated: true, isLoading: false });
@@ -66,7 +67,7 @@ export const useAuthStore = create((set) => ({
     logout: async () => {
         set({ isLoading: true, error: null });
         try {
-            await axios.post(`${import.meta.env.VITE_API_USER_URL}/logout`);
+            await axios.post(`${VITE_API_USER_URL}/logout`);
             set({ user: null, isAuthenticated: false, isLoading: false });
         } catch (error) {
             set({ error: error.response.data.message || error.message, isLoading: false });
@@ -81,16 +82,13 @@ export const useAuthStore = create((set) => ({
             if (newName) formData.append('newName', newName);
             if (newUsername) formData.append('newUsername', newUsername);
             if (newProfilePicture) formData.append('profilePicture', newProfilePicture);
-
             const response = await axios.post(
-                `${import.meta.env.VITE_API_USER_URL}/edit-user`,
+                `${VITE_API_USER_URL}/edit-user`,
                 formData,
                 {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 }
             );
-
-            // ✅ update user in store from server response
             set({
                 user: response.data.user,
                 isAuthenticated: true,
@@ -107,7 +105,7 @@ export const useAuthStore = create((set) => ({
     },
     totalUsers: async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_USER_URL}/total-user`);
+            const response = await axios.get(`${VITE_API_USER_URL}/total-user`);
             set({ totalUserIn: response?.data?.totalUsers });
         } catch (error) {
             throw new Error(error.response?.data?.message || error.message);
@@ -116,7 +114,7 @@ export const useAuthStore = create((set) => ({
     forgotPassword: async (email) => {
         set({ isLoading: true, error: null });
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_USER_URL}/forgot-password`, { email });
+            const response = await axios.post(`${VITE_API_USER_URL}/forgot-password`, { email });
             set({ message: response.data.message, isLoading: false });
         } catch (error) {
             set({
@@ -129,7 +127,7 @@ export const useAuthStore = create((set) => ({
     resetPassword: async (token, password) => {
         set({ isLoading: true, error: null });
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_USER_URL}/reset-password/${token}`, { password });
+            const response = await axios.post(`${VITE_API_USER_URL}/reset-password/${token}`, { password });
             set({ message: response.data.message, isLoading: false });
         } catch (error) {
             set({
@@ -142,7 +140,7 @@ export const useAuthStore = create((set) => ({
     signinAdmin: async (username, password) => {
         set({ isLoading: true, error: null });
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_USER_URL}/login-admin`, {
+            const response = await axios.post(`${VITE_API_USER_URL}/login-admin`, {
                 username, password
             });
             set({ admin: response.data.admin, isAuthenticatedAdmin: true, isLoading: false });
@@ -154,7 +152,7 @@ export const useAuthStore = create((set) => ({
     checkAuthAdmin: async () => {
         set({ isCheckingAuthAdmin: true, error: null });
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_USER_URL}/check-auth-admin`);
+            const response = await axios.get(`${VITE_API_USER_URL}/check-auth-admin`);
             set({ admin: response.data.admin, isAuthenticatedAdmin: true, isCheckingAuthAdmin: false });
         } catch (error) {
             set({
@@ -168,7 +166,7 @@ export const useAuthStore = create((set) => ({
     logoutAdmin: async () => {
         set({ isLoading: true, error: null });
         try {
-            await axios.post(`${import.meta.env.VITE_API_USER_URL}/logout-admin`);
+            await axios.post(`${VITE_API_USER_URL}/logout-admin`);
             set({ admin: null, isAuthenticatedAdmin: false, isLoading: false });
         } catch (error) {
             set({ error: error.response.data.message || error.message, isLoading: false });

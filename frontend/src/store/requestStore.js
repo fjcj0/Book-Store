@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
+const VITE_API_REQUEST_URL = "http://localhost:4000/api/request";
 export const useRequestStore = create((set, get) => ({
     errorRequest: null,
     isLoading: false,
@@ -14,7 +15,7 @@ export const useRequestStore = create((set, get) => ({
         set({ isLoadingRequest: true, errorRequest: null, messageRequest: null, successRequest: false });
         try {
             const response = await axios.get(
-                `${import.meta.env.VITE_API_REQUEST_URL}/requests`);
+                `${VITE_API_REQUEST_URL}/requests`);
             set({
                 requests: response?.data?.requests,
                 isLoadingRequest: false,
@@ -36,7 +37,7 @@ export const useRequestStore = create((set, get) => ({
         set({ isLoadingRequest: true, errorRequest: null, messageRequest: null, successRequest: false });
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_REQUEST_URL}/add-request`,
+                `${VITE_API_REQUEST_URL}/add-request`,
                 {
                     bookId,
                     userId,
@@ -64,7 +65,7 @@ export const useRequestStore = create((set, get) => ({
         set({ isLoading: true, errorRequest: null, successRequest: false, messageRequest: null });
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_REQUEST_URL}/approve-request`,
+                `${VITE_API_REQUEST_URL}/approve-request`,
                 { bookId, userId }
             );
             const updatedRequests = requests.filter(
@@ -92,7 +93,7 @@ export const useRequestStore = create((set, get) => ({
         set({ isLoading: true, errorRequest: null, successRequest: false, messageRequest: null });
         try {
             const response = await axios.delete(
-                `${import.meta.env.VITE_API_REQUEST_URL}/reject-request`,
+                `${VITE_API_REQUEST_URL}/reject-request`,
                 { params: { requestId } }
             );
             const updatedRequests = requests.filter(req => req._id !== requestId);
@@ -117,7 +118,7 @@ export const useRequestStore = create((set, get) => ({
         set({ isLoadingRequest: true, errorRequest: null, messageRequest: null, successRequest: false });
         try {
             const response = await axios.get(
-                `${import.meta.env.VITE_API_REQUEST_URL}/request-last-week`);
+                `${VITE_API_REQUEST_URL}/request-last-week`);
             set({
                 requestsLastWeek: response?.data,
                 isLoadingRequest: false,
