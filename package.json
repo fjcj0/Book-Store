@@ -4,7 +4,7 @@
   "type": "module",
   "main": "backend/src/index.js",
   "scripts": {
-		"dev": "NODE_ENV=development nodemon backend/index.js",
+		"dev": "NODE_ENV=development nodemon backend/src/index.js",
 		"start": "NODE_ENV=production node backend/src/index.js",
 		"build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
