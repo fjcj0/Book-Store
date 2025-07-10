@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
-const VITE_API_BOOK_URL = "http://localhost:4000/api/book";
+const VITE_API_BOOK_URL = import.meta.env.MODE === "development" ? "http://localhost:4000/api/book" : "/api/book";
 export const useBookStore = create((set) => ({
     error: null,
     isLoading: false,

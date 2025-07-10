@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
-const VITE_API_REQUEST_URL = "http://localhost:4000/api/request";
+const VITE_API_REQUEST_URL = import.meta.env.MODE === "development" ? "http://localhost:4000/api/request" : "/api/request";
 export const useRequestStore = create((set, get) => ({
     errorRequest: null,
     isLoading: false,
