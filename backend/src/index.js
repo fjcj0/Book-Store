@@ -7,6 +7,7 @@ import requestRoutes from './routes/request.route.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 
 dotenv.config();
 const app = express();
@@ -26,9 +27,15 @@ app.use('/api/request', requestRoutes);
 
 
 if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "../frontend/dist")));
+    const distPath = path.join(__dirname, "../frontend/dist");
+    app.use(express.static(distPath));
     app.get("*", (req, res) => {
-        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+        const indexFile = path.join(distPath, "index.html");
+        if (fs.existsSync(indexFile)) {
+            res.sendFile(indexFile);
+        } else {
+            res.status(500).send("index.html not found!!");
+        }
     });
 }
 
