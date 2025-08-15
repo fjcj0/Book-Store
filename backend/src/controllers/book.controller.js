@@ -215,28 +215,47 @@ export const borrowedBooksUser = async (request, response) => {
         });
     }
 };
-export const deleteBorrowedBook = async (request, response) => {
-    const { borrowedBookId, bookId } = request.query;
+export const deleteBorrowedBook = async (req, res) => {
     try {
+        const { borrowedBookId, bookId } = req.query;
         if (!borrowedBookId || !bookId) {
-            return response.status(400).json({ success: false, message: 'bookId and borrowedBookId are required!' });
+            return res.status(400).json({
+                success: false,
+                message: 'borrowedBookId and bookId are required!',
+            });
         }
-        const checkBorrowedBook = await BorrowedBook.findById(borrowedBookId);
-        if (!checkBorrowedBook) {
-            return response.status(404).json({ success: false, message: 'Borrowed book not found!' });
+        const borrowedBook = await BorrowedBook.findById(borrowedBookId);
+        if (!borrowedBook) {
+            return res.status(404).json({
+                success: false,
+                message: 'Borrowed book not found!',
+            });
         }
         const book = await Book.findById(bookId);
         if (!book) {
-            return response.status(404).json({ success: false, message: 'Book not found!' });
+            return res.status(404).json({
+                success: false,
+                message: 'Book not found!',
+            });
         }
-        if (!checkBorrowedBook.returned) {
+        if (!borrowedBook.returned) {
             book.quantity += 1;
             await book.save();
+            console.log('Book quantity updated:', book.quantity);
         }
-        await BorrowedBook.deleteOne({ _id: borrowedBookId });
-        return response.status(200).json({ success: true, message: 'Borrowed book has been returned successfully!' });
+        await BorrowedBook.findByIdAndDelete(borrowedBookId);
+        console.log('Borrowed book deleted successfully');
+        return res.status(200).json({
+            success: true,
+            message: 'Borrowed book has been returned and deleted successfully!',
+        });
+
     } catch (error) {
-        return response.status(500).json({ success: false, message: error.message });
+        console.error('Error deleting borrowed book:', error);
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
 };
 export const returnBook = async (request, response) => {

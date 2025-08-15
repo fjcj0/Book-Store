@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 const VITE_API_BOOK_URL = import.meta.env.MODE === "development" ? "http://localhost:4000/api/book" : "/api/book";
-export const useBookStore = create((set) => ({
+export const useBookStore = create((set,get) => ({
     error: null,
     isLoading: false,
     isLoadingBook: false,
@@ -287,20 +287,30 @@ export const useBookStore = create((set) => ({
         }
     },
     deleteBorrowedBook: async (bookId, borrowedBookId) => {
+        if (!bookId || !borrowedBookId) {
+            set({
+                error: "Book ID or Borrowed Book ID is missing",
+                isLoadingBook: false,
+                success: false,
+                message: null,
+            });
+            return;
+        }
         set({ isLoadingBook: true, error: null, success: false, message: null });
         try {
             const response = await axios.delete(
                 `${VITE_API_BOOK_URL}/delete-borrowed-book`,
                 { params: { borrowedBookId, bookId } }
             );
-            const refreshed = await axios.get(
-                `${VITE_API_BOOK_URL}/borrowed-books`
-            );
+            const currentBorrowedBooks = get().BorrowedBooks || [];
             set({
+                BorrowedBooks: currentBorrowedBooks.filter(
+                    (b) => b.id !== borrowedBookId
+                ),
                 isLoadingBook: false,
                 success: true,
-                message: response?.data?.message,
-                BorrowedBooks: refreshed?.data?.borrowedBook,
+                message: response?.data?.message || "Borrowed book deleted successfully!",
+                error: null,
             });
         } catch (error) {
             set({
@@ -309,7 +319,7 @@ export const useBookStore = create((set) => ({
                 success: false,
                 message: null,
             });
-            throw new Error(error?.response?.data?.message || error?.message);
+            console.error("Failed to delete borrowed book:", error);
         }
     },
     totalBooks: async () => {
