@@ -287,6 +287,7 @@ export const useBookStore = create((set,get) => ({
         }
     },
     deleteBorrowedBook: async (bookId, borrowedBookId) => {
+        const { BorrowedBooks } = get();
         if (!bookId || !borrowedBookId) {
             set({
                 error: "Book ID or Borrowed Book ID is missing",
@@ -301,10 +302,9 @@ export const useBookStore = create((set,get) => ({
             const response = await axios.delete(
                 `${VITE_API_BOOK_URL}/delete-borrowed-book/${borrowedBookId}/${bookId}`
             );
-            const currentBorrowedBooks = get().BorrowedBooks || [];
             set({
-                BorrowedBooks: currentBorrowedBooks.filter(
-                    (b) => b.id !== borrowedBookId
+                BorrowedBooks: BorrowedBooks.filter(
+                    (b) => b._id !== borrowedBookId
                 ),
                 isLoadingBook: false,
                 success: true,
@@ -318,7 +318,6 @@ export const useBookStore = create((set,get) => ({
                 success: false,
                 message: null,
             });
-            console.error("Failed to delete borrowed book:", error);
         }
     },
     totalBooks: async () => {
