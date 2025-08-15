@@ -217,7 +217,7 @@ export const borrowedBooksUser = async (request, response) => {
 };
 export const deleteBorrowedBook = async (req, res) => {
     try {
-        const { borrowedBookId, bookId } = req.query;
+        const { borrowedBookId, bookId } = req.params;
         if (!borrowedBookId || !bookId) {
             return res.status(400).json({
                 success: false,
