@@ -299,8 +299,7 @@ export const useBookStore = create((set,get) => ({
         set({ isLoadingBook: true, error: null, success: false, message: null });
         try {
             const response = await axios.delete(
-                `${VITE_API_BOOK_URL}/delete-borrowed-book`,
-                { params: { borrowedBookId, bookId } }
+                `${VITE_API_BOOK_URL}/delete-borrowed-book/${borrowedBookId}/${bookId}`
             );
             const currentBorrowedBooks = get().BorrowedBooks || [];
             set({

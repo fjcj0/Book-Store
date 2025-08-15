@@ -14,7 +14,7 @@ router.post('/saved-books-user', verifyToken, savedBookUser);
 router.delete('/delete-saved-book-user/:savedBookId', verifyToken, deleteSavedBook);
 router.post('/add-borrowed-book-user', verifyToken, addBorrowedBookUser);
 router.post('/borrowed-books-user', verifyToken, borrowedBooksUser);
-router.delete('/delete-borrowed-book/:borrowedBookId', verifyTokenAdmin, deleteBorrowedBook);
+router.delete('/delete-borrowed-book/:borrowedBookId/:bookId', verifyTokenAdmin, deleteBorrowedBook);
 router.get('/borrowed-books', borrowedBooks);
 router.post('/return-borrowed-book', verifyTokenAdmin, returnBook);
 router.get('/total-book', totalBooks);
